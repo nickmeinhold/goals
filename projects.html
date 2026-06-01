@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>100 Projects · 2026 burn-down</title>
+<title>100 Ships · 2026</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --ink:#e8ebf0; --muted:#9aa3b2;
@@ -13,11 +13,10 @@
   body{margin:0; background:var(--bg); color:var(--ink);
     font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     padding:40px 20px 96px}
-  .wrap{max-width:920px; margin:0 auto}
+  .wrap{max-width:880px; margin:0 auto}
   a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
   .back{font-size:13px; color:var(--muted)}
 
-  /* ---- scoreboard ---- */
   .score{display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; margin:14px 0 6px}
   .big{font-size:60px; font-weight:750; line-height:1; font-variant-numeric:tabular-nums}
   .big .of{font-size:28px; color:var(--muted); font-weight:600}
@@ -28,31 +27,32 @@
   .fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); border-radius:99px; width:0; transition:width .3s}
   .needle{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--warn); opacity:.7}
   .tracklabels{display:flex; justify-content:space-between; color:var(--muted); font-size:11px}
+  .def{color:var(--muted); font-size:13px; margin:18px 0 6px; padding:10px 14px; background:var(--panel); border-left:3px solid var(--accent); border-radius:0 8px 8px 0}
+  .def b{color:var(--ink)}
 
   h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
-    margin:40px 0 6px; border-bottom:1px solid var(--line); padding-bottom:8px;
+    margin:34px 0 6px; border-bottom:1px solid var(--line); padding-bottom:8px;
     display:flex; justify-content:space-between; align-items:baseline}
   h2 .count{color:var(--ink); font-variant-numeric:tabular-nums}
-  .hint{color:var(--muted); font-size:13px; margin:0 0 12px}
+  .hint{color:var(--muted); font-size:13px; margin:0 0 14px}
 
-  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:8px}
-  .row{display:flex; gap:10px; align-items:flex-start; padding:10px 12px; background:var(--panel);
-    border:1px solid var(--line); border-radius:9px}
-  .mark{flex:0 0 auto; width:18px; height:18px; border:1.5px solid var(--track); border-radius:5px; margin-top:2px;
-    display:flex; align-items:center; justify-content:center; font-size:12px; color:#0f1115; font-weight:800}
-  .row .name{font-weight:600; font-size:14px}
-  .row .desc{color:var(--muted); font-size:12px; margin-top:1px}
-  .row[data-state="shipped"]{background:var(--panel2); border-color:var(--good)}
-  .row[data-state="shipped"] .mark{background:var(--good); border-color:var(--good)}
-  .row[data-state="shipped"] .mark::after{content:"\2713"}
-  .row[data-state="shipped"] .when{color:var(--good); font-size:11px; margin-top:1px}
-  .row[data-state="killed"]{opacity:.5}
-  .row[data-state="killed"] .name{text-decoration:line-through; color:var(--kill)}
-  .row[data-state="killed"] .mark{border-style:dashed}
-  .row[data-state="killed"] .mark::after{content:"\2715"; color:var(--kill)}
+  .proj{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:8px 0}
+  .proj.has-ships{border-color:#2f4a36}
+  .phead{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+  .pname{font-weight:650; font-size:15px}
+  .badge{font-size:11px; font-weight:700; padding:1px 8px; border-radius:99px; background:var(--track); color:var(--muted); white-space:nowrap}
+  .badge.lit{background:var(--good); color:#0b1220}
+  .kind{font-size:11px; color:var(--kill); border:1px solid var(--line); padding:0 6px; border-radius:99px}
+  .pdesc{color:var(--muted); font-size:12px; flex:1 1 100%}
+  .ships{list-style:none; margin:8px 0 0; padding:0}
+  .ships li{display:flex; gap:8px; align-items:baseline; padding:3px 0; font-size:13px}
+  .tick{flex:0 0 auto; width:16px; text-align:center; font-weight:800}
+  li.done .tick{color:var(--good)} li.done{color:var(--ink)}
+  li.open .tick{color:var(--track)} li.open{color:var(--muted)}
+  .when{flex:0 0 auto; font-size:11px; color:var(--good); width:34px; font-variant-numeric:tabular-nums}
+  li.open .when{color:transparent}
 
-  .empty{color:var(--muted); font-size:13px; font-style:italic; padding:8px 0}
-  footer{margin-top:40px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
+  footer{margin-top:38px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
   code{background:var(--panel2); padding:1px 6px; border-radius:5px; font-size:12px}
 </style>
 </head>
@@ -67,117 +67,151 @@
   <div class="track"><div class="fill" id="fill"></div><div class="needle" id="needle" title="where you should be today"></div></div>
   <div class="tracklabels"><span>Jan 2026</span><span>amber line = on-pace marker</span><span>Dec 2026</span></div>
 
-  <!-- ===== 50 on the go ===== -->
-  <h2>On the go <span class="count"><span id="goCount">0</span> shipped &middot; 50 target</span></h2>
-  <p class="hint">Projects already in flight, seeded from the working notes. A card turns green when shipped, dashed-grey when killed (deciding-not-to-finish clears the queue &mdash; that's a win too). <span style="color:var(--warn)">~23 slots still unnamed.</span></p>
-  <div class="grid" id="inflight"></div>
+  <div class="def">
+    A <b>ship</b> = one <b>dated, demonstrable</b> thing put into the world &mdash; a release, a working capability, a talk given, a doc published. <b>Showable, not "made progress."</b>
+    Some projects finish in one ship; the evergreen ones (SNES, the graph engine&hellip;) never "finish" &mdash; they just keep emitting ships all year. The 100 counts ships, not projects.
+  </div>
 
-  <!-- ===== 50 new ===== -->
-  <h2>New &mdash; start &amp; ship <span class="count"><span id="newCount">0</span> / 50</span></h2>
-  <p class="hint">Brand-new projects, logged with a ship date as each one lands.</p>
-  <div class="grid" id="newgrid"></div>
-  <div class="empty" id="newEmpty">Nothing shipped from scratch yet. The first one's the hardest.</div>
+  <h2>Projects &amp; their ships <span class="count"><span id="shipCount">0</span> ships &middot; <span id="projCount">0</span> projects</span></h2>
+  <p class="hint">Seeded from working notes. Only items memory records as <em>shipped with a date</em> are ticked &mdash; the rest are open milestones (&#9675;) waiting for the real ship date. Tell me what's actually shipped and I'll log it.</p>
+  <div id="projects"></div>
 
   <footer>
-    Live burn-down for the <a href="index.html">2026 goals board</a>. This is a <b>public commitment</b>, so progress is
-    authoritative &mdash; it lives in the repo, not your browser. Each ship is a git commit: a timestamped, public record.<br>
-    Update by editing the <code>DATA</code> block in this file (set a project's <code>state</code> to <code>"shipped"</code>/<code>"killed"</code>, or add a new one) and pushing.
+    Live ship-count for the <a href="index.html">2026 goals board</a> &mdash; a <b>public commitment</b>. Progress is authoritative: it lives in the repo, and every ship is a dated git commit (the history <em>is</em> the proof).<br>
+    Update by editing the <code>DATA</code> block in this file &mdash; move a milestone from <code>open</code> to a <code>when</code> date, or add a new project/ship &mdash; then push.
   </footer>
 </div>
 
 <script>
 // ============================================================================
 //  SINGLE SOURCE OF TRUTH — committed to the repo, identical for every visitor.
-//  To record progress: change a state below (or add an entry) and `git push`.
-//  The commit history is itself the public proof of what shipped, and when.
+//  The 100 counts SHIPS: dated, demonstrable milestones.
+//  A ship is { label, when:"Mon" }.  An open milestone is just a string.
+//  To record a ship: move a label out of `open` into `ships` with a `when`. Then push.
+//  Only two items are pre-ticked — the only ones memory records shipped-with-a-date.
 // ============================================================================
-const DATA = {
-  // 50 already on the go. state: "open" | "shipped" | "killed". Add "when":"YYYY-MM-DD" when shipped.
-  inflight: [
-    {name:"Echo", desc:"self-consistency LLM routing (enspyrco/echo)", state:"open"},
-    {name:"SNES emulator", desc:"Rust/WASM — mode 07 stall is the blocker", state:"open"},
-    {name:"The Dreaming Repo (Flux)", desc:"living repo: heartbeat, senses, dreams", state:"open"},
-    {name:"Graph engine", desc:"extract Engram's CRDT mechanism, rule-of-three", state:"open"},
-    {name:"Domain visualiser", desc:"2021 Flutter collab-draw, revived", state:"open"},
-    {name:"Symposium", desc:"8-figure multi-agent debate over LiveKit", state:"open"},
-    {name:"Agent-operator", desc:"k8s-style Agent CRD + controller", state:"open"},
-    {name:"/consolidate skill", desc:"v5 — affective markers + parallel agents", state:"open"},
-    {name:"Consolidation eval", desc:"5-dim scoring, polynomial response surface", state:"open"},
-    {name:"Memory consolidation research", desc:"five-domain sweep + experiment", state:"open"},
-    {name:"Persona experiment", desc:"10-PR forward A/B cohort, blind triage", state:"open"},
-    {name:"Language typology platform", desc:"typology → CS-concept mapping probe", state:"open"},
-    {name:"Pattern Battle", desc:"voice quiz + FSRS knowledge graph", state:"open"},
-    {name:"Presentation Level-Up", desc:"synthetic rehearsal audience", state:"open"},
-    {name:"Forge", desc:"planner/builder/evaluator CLI loop", state:"open"},
-    {name:"Token dashboard", desc:"accurate Claude token accounting", state:"open"},
-    {name:"Infra consolidation", desc:"7-repo merge → multi-tenant monorepo", state:"open"},
-    {name:"Stage / Dreamfinder", desc:"the room-body surface for the agent", state:"open"},
-    {name:"Graph↔Flux integration", desc:"dream cycles strengthen used edges", state:"open"},
-    {name:"Matrix chat superbridge", desc:"bridge for Imagineering + AMR", state:"open"},
-    {name:"Love agent", desc:"relationship corpus / agent", state:"open"},
-    {name:"Recycled Sound", desc:"xdeca project", state:"open"},
-    {name:"Continuwuity contribution", desc:"upstream Matrix server work", state:"open"},
-    {name:"My Train ETA", desc:"Flutter transit app", state:"open"},
-    {name:"WhatsApp bot", desc:"Baileys-based personal posting", state:"open"},
-    {name:"Fake-me Discord", desc:"persona Discord bot", state:"open"},
-    {name:"CLI tools suite", desc:"gmail/gdrive/signal/telegram/outline/kan", state:"open"}
-  ],
-  // 50 to start AND ship from scratch. Add an entry (with ship date) as each lands.
-  newp: [
-    // {name:"…", when:"2026-06-…"},
-  ]
-};
+const TARGET = 100;
+const DATA = [
+  {name:"Symposium", kind:"evergreen", desc:"8-figure multi-agent debate over LiveKit",
+    ships:[{label:"163-exchange live debate", when:"May"}], open:["MPFB avatars","orchestrator test"]},
+  {name:"Stage / Dreamfinder", kind:"evergreen", desc:"the room-body surface for the agent",
+    ships:[{label:"jukebox first show", when:"May"}], open:["next live show"]},
+
+  {name:"SNES emulator", kind:"evergreen", desc:"Rust/WASM",
+    ships:[], open:["mode-07 background renders (the blocker)","$4016 input fix — confirm shipped?","audio watermark validation — confirm?"]},
+  {name:"The Dreaming Repo (Flux)", kind:"evergreen", desc:"living repo: heartbeat, senses, dreams",
+    ships:[], open:["flux plan steps 6–9"]},
+  {name:"Graph engine", kind:"evergreen", desc:"extract Engram's CRDT mechanism, rule-of-three",
+    ships:[], open:["domvis 7-step seam"]},
+  {name:"Domain visualiser", kind:"evergreen", desc:"2021 Flutter collab-draw, revived",
+    ships:[], open:[]},
+  {name:"Agent-operator", kind:"evergreen", desc:"k8s-style Agent CRD + controller",
+    ships:[], open:[]},
+  {name:"/consolidate skill", kind:"evergreen", desc:"the consolidation pipeline",
+    ships:[], open:["v5 — confirm shipped?"]},
+  {name:"Consolidation eval", kind:"evergreen", desc:"5-dim scoring, response-surface",
+    ships:[], open:["polynomial regression over ~10 variants"]},
+  {name:"Memory consolidation research", kind:"evergreen", desc:"five-domain sweep + experiment",
+    ships:[], open:[]},
+  {name:"Persona experiment", kind:"evergreen", desc:"10-PR forward A/B cohort",
+    ships:[], open:["blind triage of the closed cohort"]},
+  {name:"Language typology platform", kind:"evergreen", desc:"typology → CS-concept mapping",
+    ships:[], open:["validity packet","ARM worker /probe + /translate — confirm shipped?"]},
+  {name:"Echo", kind:"evergreen", desc:"self-consistency LLM routing",
+    ships:[], open:[]},
+  {name:"Graph↔Flux integration", kind:"evergreen", desc:"dream cycles strengthen used edges",
+    ships:[], open:[]},
+  {name:"Forge", kind:"evergreen", desc:"planner/builder/evaluator CLI loop",
+    ships:[], open:[]},
+  {name:"Infra consolidation", kind:"evergreen", desc:"7-repo merge → multi-tenant monorepo",
+    ships:[], open:[]},
+  {name:"Matrix chat superbridge", kind:"evergreen", desc:"bridge for Imagineering + AMR",
+    ships:[], open:[]},
+  {name:"Continuwuity contribution", kind:"evergreen", desc:"upstream Matrix server work",
+    ships:[], open:[]},
+
+  {name:"Pattern Battle", kind:"oneshot", desc:"voice quiz + FSRS knowledge graph",
+    ships:[], open:["ship v1"]},
+  {name:"Presentation Level-Up", kind:"oneshot", desc:"synthetic rehearsal audience",
+    ships:[], open:[]},
+  {name:"Token dashboard", kind:"oneshot", desc:"accurate Claude token accounting",
+    ships:[], open:["confirm shipped?"]},
+  {name:"My Train ETA", kind:"oneshot", desc:"Flutter transit app",
+    ships:[], open:[]},
+  {name:"WhatsApp bot", kind:"oneshot", desc:"Baileys-based personal posting",
+    ships:[], open:[]},
+  {name:"Fake-me Discord", kind:"oneshot", desc:"persona Discord bot",
+    ships:[], open:[]},
+  {name:"CLI tools suite", kind:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan",
+    ships:[], open:[]},
+  {name:"Love agent", kind:"evergreen", desc:"relationship corpus / agent",
+    ships:[], open:[]},
+  {name:"Recycled Sound", kind:"evergreen", desc:"xdeca project",
+    ships:[], open:[]}
+];
 
 const DAY=86400000;
 const YEAR_START=new Date(2026,0,1), YEAR_END=new Date(2026,11,31);
 const $=id=>document.getElementById(id);
 
 function render(){
-  const ig=$("inflight"); ig.innerHTML="";
-  let goShipped=0;
-  DATA.inflight.forEach(p=>{
-    if(p.state==="shipped")goShipped++;
-    const row=document.createElement("div");
-    row.className="row"; row.dataset.state=p.state||"open";
-    row.innerHTML='<div class="mark"></div><div><div class="name"></div><div class="desc"></div></div>';
-    row.querySelector(".name").textContent=p.name;
-    row.querySelector(".desc").textContent = p.state==="shipped" && p.when ? "shipped "+p.when : p.desc;
-    ig.appendChild(row);
+  const box=$("projects"); box.innerHTML="";
+  let shipped=0;
+  // projects with ships float to the top
+  const sorted=[...DATA].sort((a,b)=>b.ships.length-a.ships.length);
+  sorted.forEach(p=>{
+    shipped += p.ships.length;
+    const el=document.createElement("div");
+    el.className="proj"+(p.ships.length?" has-ships":"");
+    const n=p.ships.length;
+    el.innerHTML =
+      '<div class="phead">'+
+        '<span class="pname"></span>'+
+        '<span class="badge'+(n?' lit':'')+'">'+(n?('▸ '+n+(n>1?' ships':' ship')):'no ships yet')+'</span>'+
+        '<span class="kind">'+(p.kind==="evergreen"?"evergreen":"one-shot")+'</span>'+
+        '<span class="pdesc"></span>'+
+      '</div>';
+    el.querySelector(".pname").textContent=p.name;
+    el.querySelector(".pdesc").textContent=p.desc;
+    if(p.ships.length || p.open.length){
+      const ul=document.createElement("ul"); ul.className="ships";
+      p.ships.forEach(s=>{
+        const li=document.createElement("li"); li.className="done";
+        li.innerHTML='<span class="tick">✓</span><span class="when"></span><span class="lbl"></span>';
+        li.querySelector(".when").textContent=s.when||"";
+        li.querySelector(".lbl").textContent=s.label;
+        ul.appendChild(li);
+      });
+      p.open.forEach(lbl=>{
+        const li=document.createElement("li"); li.className="open";
+        li.innerHTML='<span class="tick">○</span><span class="when">·</span><span class="lbl"></span>';
+        li.querySelector(".lbl").textContent=lbl;
+        ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+    box.appendChild(el);
   });
 
-  const ng=$("newgrid"); ng.innerHTML="";
-  DATA.newp.forEach(p=>{
-    const row=document.createElement("div");
-    row.className="row"; row.dataset.state="shipped";
-    row.innerHTML='<div class="mark"></div><div><div class="name"></div><div class="when"></div></div>';
-    row.querySelector(".name").textContent=p.name;
-    row.querySelector(".when").textContent = p.when ? "shipped "+p.when : "shipped";
-    ng.appendChild(row);
-  });
-  $("newEmpty").style.display = DATA.newp.length? "none":"block";
+  $("total").textContent=shipped;
+  $("shipCount").textContent=shipped;
+  $("projCount").textContent=DATA.length;
+  $("fill").style.width=Math.min(100,shipped/TARGET*100)+"%";
 
-  const newShipped=DATA.newp.length;
-  const total=goShipped+newShipped;
-  $("total").textContent=total;
-  $("goCount").textContent=goShipped;
-  $("newCount").textContent=newShipped;
-  $("fill").style.width=Math.min(100,total)+"%";
-
-  // pace needle — read-only, computed from today's date
   const now=new Date();
   const frac=Math.max(0,Math.min(1,(now-YEAR_START)/(YEAR_END-YEAR_START)));
   $("needle").style.left=(frac*100)+"%";
-  const expected=Math.round(frac*100);
+  const expected=Math.round(frac*TARGET);
   const weeksLeft=Math.max(0,Math.round((YEAR_END-now)/(7*DAY)));
-  const remaining=Math.max(0,100-total);
+  const remaining=Math.max(0,TARGET-shipped);
   const perWeek=weeksLeft? (remaining/weeksLeft).toFixed(1):"—";
-  const delta=total-expected;
+  const delta=shipped-expected;
   const status = delta>=0
-    ? `<span class="ahead">${delta} ahead of pace</span>`
-    : `<span class="behind">${-delta} behind pace</span>`;
+    ? '<span class="ahead">'+delta+' ahead of pace</span>'
+    : '<span class="behind">'+(-delta)+' behind pace</span>';
   $("pace").innerHTML =
-    `${status} &middot; on-pace today ≈ <b>${expected}</b><br>`+
-    `<b>${remaining}</b> to go &middot; <b>${weeksLeft}</b> weeks left &middot; need <b>${perWeek}/week</b>`;
+    status+' &middot; on-pace today ≈ <b>'+expected+'</b><br>'+
+    '<b>'+remaining+'</b> ships to go &middot; <b>'+weeksLeft+'</b> weeks left &middot; need <b>'+perWeek+'/week</b>';
 }
 render();
 </script>
