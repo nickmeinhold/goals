@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nick · 2026 Goals</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --ink:#e8ebf0; --muted:#9aa3b2;
+    --line:#272c38; --accent:#6ea8fe; --good:#4ade80; --warn:#fbbf24; --track:#2a3040;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:48px 20px 96px;
+  }
+  .wrap{max-width:880px; margin:0 auto}
+  header{margin-bottom:40px}
+  .eyebrow{color:var(--accent); font-weight:600; letter-spacing:.08em; text-transform:uppercase; font-size:12px}
+  h1{font-size:34px; margin:.2em 0 .1em; line-height:1.15}
+  .vision{color:var(--muted); font-size:18px; max-width:62ch}
+  .meta{color:var(--muted); font-size:13px; margin-top:14px}
+
+  .group-title{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:38px 0 14px; border-bottom:1px solid var(--line); padding-bottom:8px}
+
+  details.goal{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    margin:12px 0; overflow:hidden;
+  }
+  details.goal[open]{background:var(--panel2)}
+  summary{
+    list-style:none; cursor:pointer; padding:16px 18px; display:flex; gap:14px; align-items:center;
+  }
+  summary::-webkit-details-marker{display:none}
+  .emoji{font-size:22px; flex:0 0 auto}
+  .s-main{flex:1 1 auto; min-width:0}
+  .s-title{font-weight:650; font-size:17px}
+  .s-metric{color:var(--muted); font-size:13px; margin-top:2px}
+  .from-to{font-variant-numeric:tabular-nums}
+  .from-to b{color:var(--ink)}
+  .from-to .to{color:var(--good)}
+  .chev{color:var(--muted); font-size:13px; transition:transform .15s}
+  details[open] .chev{transform:rotate(90deg)}
+
+  .body{padding:0 18px 18px 54px; color:var(--ink)}
+  .body p{margin:.5em 0; color:var(--muted)}
+  .body .why{color:var(--ink)}
+  .milestones{list-style:none; padding:0; margin:12px 0 0}
+  .milestones li{display:flex; gap:10px; align-items:flex-start; padding:6px 0; color:var(--muted)}
+  .milestones .box{flex:0 0 auto; width:16px; height:16px; border:1.5px solid var(--track); border-radius:4px; margin-top:3px}
+  .milestones li.done .box{background:var(--good); border-color:var(--good)}
+  .milestones li.done{color:var(--ink); text-decoration:line-through; text-decoration-color:var(--track)}
+  .deadline{color:var(--warn); font-weight:600; font-size:12px; margin-left:auto; white-space:nowrap}
+
+  .track{height:6px; background:var(--track); border-radius:99px; margin-top:10px; overflow:hidden}
+  .fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); border-radius:99px}
+
+  footer{margin-top:48px; color:var(--muted); font-size:13px; border-top:1px solid var(--line); padding-top:18px}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">2026 · The year I said out loud</div>
+    <h1>Build the ventures, pack the rooms, and leave space for the person to step into it.</h1>
+    <p class="vision">Three businesses to scale, a community to 10&times;, six regional hackerspaces to spark, 100 projects to ship &mdash; and an adventure that needs a co-pilot. The first screen is the gist; open any goal for the detail.</p>
+    <div class="meta">Started 1 June 2026 &middot; horizon: end of 2026 (caf&eacute; gate: October high season) &middot; <em>edit me freely &mdash; this is a living dashboard</em></div>
+  </header>
+
+  <!-- ===================== VENTURES ===================== -->
+  <div class="group-title">Ventures &mdash; revenue &amp; scale</div>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🏢</span>
+      <span class="s-main">
+        <div class="s-title">Scale Enspyr</div>
+        <div class="s-metric from-to">Team <b>1</b> &rarr; <b class="to">10</b> employees &middot; <b>3</b> &rarr; <b class="to">20</b> contractors</div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">From a founder-plus-helpers shop into a real consultancy with bench depth.</p>
+      <p>Robin, Delia and the Kodamai contract are the current spine. The 10&times; jump is a hiring + pipeline problem, not a delivery one &mdash; the constraint is sales capacity, then onboarding.</p>
+      <div class="track"><div class="fill" style="width:14%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Define the 3 roles to hire first (delivery lead, BD, ?)</li>
+        <li><span class="box"></span>Standing contractor bench of 20 (who, what skills, how sourced)</li>
+        <li><span class="box"></span>Pipeline that can feed a 10-person team</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🍷</span>
+      <span class="s-main">
+        <div class="s-title">Sawasdee Cellars into the black</div>
+        <div class="s-metric from-to">AU &harr; Thai wine export &middot; <b>break-even</b> &rarr; <b class="to">solid profit</b></div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">Turn the venture with Sai from "running" into "clearly worth it" &mdash; into <b>solid profit this year.</b></p>
+      <p>Track it monthly against a private run-rate target so you're always either ahead-of or behind-on, never guessing. If export volume is seasonal, front-load into the strong months rather than assuming a flat line.</p>
+      <div class="track"><div class="fill" style="width:8%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Hit the (private) monthly profit run-rate</li>
+        <li><span class="box"></span>Lock the AU&rarr;Thai logistics + compliance path</li>
+        <li><span class="box"></span>Repeatable order channel (who buys, how often)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">☕</span>
+      <span class="s-main">
+        <div class="s-title">Open the Koh Lanta caf&eacute;</div>
+        <div class="s-metric from-to">Shell &rarr; <b class="to">extension + branding + open</b></div>
+      </span>
+      <span class="deadline">⏳ Oct &mdash; high season</span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">The most date-locked goal on the board. October high season is a hard external deadline &mdash; everything else can slip a quarter, this can't.</p>
+      <p>Three parallel tracks: <b>build</b> (extension), <b>brand</b> (identity/design), <b>operate</b> (open ready for trade). Backwards from October, the build needs to start now.</p>
+      <div class="track"><div class="fill" style="width:20%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Get the space into a beautiful state</li>
+        <li><span class="box"></span>Extension built &mdash; <b>critical path, start now</b></li>
+        <li><span class="box"></span>Branding done (name, identity, signage, menu)</li>
+        <li><span class="box"></span>Open for October high season</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ===================== COMMUNITY & BUILD ===================== -->
+  <div class="group-title">Community &amp; build</div>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🎭</span>
+      <span class="s-main">
+        <div class="s-title">Imagineering to 1000</div>
+        <div class="s-metric from-to">Members <b>150</b> &rarr; <b class="to">1000</b> &middot; weekly packed venues &middot; 3D avatar agent facilitating</div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">From a monthly meetup into a weekly Melbourne institution where the AI agent (Dreamfinder) runs the room.</p>
+      <p>Two intertwined jumps: <b>reach</b> (150&rarr;1000, ~6.6&times;) and <b>cadence</b> (monthly&rarr;weekly). The avatar-facilitated hackathon format is the differentiator no other meetup has &mdash; that's the growth engine, not a side feature.</p>
+      <div class="track"><div class="fill" style="width:15%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Move to weekly cadence (venue + format that scales)</li>
+        <li><span class="box"></span>Dreamfinder reliably facilitates a live session end-to-end</li>
+        <li><span class="box"></span>Growth loop: 150 &rarr; 1000 (referrals, partners, press)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🔧</span>
+      <span class="s-main">
+        <div class="s-title">Spark 6 regional hackerspaces</div>
+        <div class="s-metric from-to">Bendigo + 5 regional areas &middot; <b>0</b> &rarr; <b class="to">6</b></div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">Take the Imagineering / AMR energy out of Melbourne and seed it in regional Victoria.</p>
+      <p>Bendigo is goal #1 and the template. The other five are repeatable once Bendigo proves the playbook &mdash; so this is really "nail one, clone five."</p>
+      <div class="track"><div class="fill" style="width:5%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Bendigo running (the template)</li>
+        <li><span class="box"></span>Name the other 5 regions</li>
+        <li><span class="box"></span>Replication playbook so each doesn't start from zero</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🚀</span>
+      <span class="s-main">
+        <div class="s-title">Ship 100 projects in 2026</div>
+        <div class="s-metric from-to"><b>50</b> on the go &middot; start <em>&amp;</em> ship <b class="to">50</b> new &middot; <b>0</b> / <b class="to">100</b></div>
+      </span>
+      <span class="deadline">⏳ ~3 / week</span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">The headline number on the whole board: <b>100 projects shipped in 2026.</b> 50 already on the go, plus 50 started <em>and</em> shipped from scratch.</p>
+      <p>~30 weeks left &rarr; <b>~3 ships/week.</b> Saner than it sounds: half are already part-built, so the real net-new load is the 50 from zero. The skill to keep sharp is a <b>ruthless ship-or-kill reflex</b> &mdash; nothing half-done clogging the queue.</p>
+      <p>&rarr; <b><a href="projects.html">Open the live burn-down board (n / 100)</a></b> &mdash; toggle each project shipped/killed; the counter and pace update as you go.</p>
+      <div class="track"><div class="fill" style="width:1%"></div></div>
+      <ul class="milestones">
+        <li><span class="box"></span>Name the 50 on the go &mdash; ship-or-kill call on each</li>
+        <li><span class="box"></span>Keep "new" projects small enough to ship in a sitting</li>
+        <li><span class="box"></span>Burn down: 0 / 100 shipped &rarr; <a href="projects.html">board</a></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ===================== LIFE ===================== -->
+  <div class="group-title">Life &mdash; the part that makes the rest worth it</div>
+
+  <details class="goal">
+    <summary>
+      <span class="emoji">🎷</span>
+      <span class="s-main">
+        <div class="s-title">Palate &amp; play</div>
+        <div class="s-metric">Jazz nights &middot; mocktails &middot; wine tastings &middot; basketball again</div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">The recharge goals. Develop the palate (which also feeds Sawasdee), get the body moving, keep the calendar from being 100% work.</p>
+      <p>Easy to let these be the first thing dropped when the ventures heat up. Worth a recurring slot, not a someday.</p>
+      <ul class="milestones">
+        <li><span class="box"></span>Regular jazz / tasting nights on the calendar</li>
+        <li><span class="box"></span>Back playing basketball</li>
+        <li><span class="box"></span>Mocktail + wine palate as a deliberate practice</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="goal" open>
+    <summary>
+      <span class="emoji">💫</span>
+      <span class="s-main">
+        <div class="s-title">Start the adventure</div>
+        <div class="s-metric">Leave room in all of it for the right person</div>
+      </span>
+      <span class="chev">&#9656;</span>
+    </summary>
+    <div class="body">
+      <p class="why">Last on the list but open by default &mdash; because it's the one the whole board is secretly for.</p>
+      <p>Not a slot to fill, but <b>the specific adventure with someone in it</b> &mdash; sanding a caf&eacute; tabletop in Koh Lanta, co-running a hackathon, on the regional road trip. Build the rest so there's <em>visibly</em> room for a person, and this stops being a separate goal and becomes the through-line.</p>
+      <ul class="milestones">
+        <li><span class="box"></span>Build the ventures so there's visible room for two</li>
+        <li><span class="box"></span>Start the adventure together</li>
+      </ul>
+    </div>
+  </details>
+
+  <footer>
+    A year said out loud, 1 June 2026 &mdash; an honest brain-dump turned into a board.<br>
+    Five of these are live nodes in the memory graph: Enspyr, Sawasdee Cellars, Imagineering, the caf&eacute;, and the ~30 projects.<br>
+    Next move when any single goal needs real tracking: graduate it into its own page beside this one and link from its card.
+  </footer>
+</div>
+</body>
+</html>
