@@ -37,8 +37,7 @@
 
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:8px}
   .row{display:flex; gap:10px; align-items:flex-start; padding:10px 12px; background:var(--panel);
-    border:1px solid var(--line); border-radius:9px; cursor:pointer; user-select:none; transition:.12s}
-  .row:hover{border-color:var(--accent)}
+    border:1px solid var(--line); border-radius:9px}
   .mark{flex:0 0 auto; width:18px; height:18px; border:1.5px solid var(--track); border-radius:5px; margin-top:2px;
     display:flex; align-items:center; justify-content:center; font-size:12px; color:#0f1115; font-weight:800}
   .row .name{font-weight:600; font-size:14px}
@@ -46,19 +45,15 @@
   .row[data-state="shipped"]{background:var(--panel2); border-color:var(--good)}
   .row[data-state="shipped"] .mark{background:var(--good); border-color:var(--good)}
   .row[data-state="shipped"] .mark::after{content:"\2713"}
+  .row[data-state="shipped"] .when{color:var(--good); font-size:11px; margin-top:1px}
   .row[data-state="killed"]{opacity:.5}
   .row[data-state="killed"] .name{text-decoration:line-through; color:var(--kill)}
   .row[data-state="killed"] .mark{border-style:dashed}
   .row[data-state="killed"] .mark::after{content:"\2715"; color:var(--kill)}
 
-  .addbar{display:flex; gap:8px; margin:12px 0}
-  .addbar input{flex:1; background:var(--panel); border:1px solid var(--line); color:var(--ink);
-    border-radius:8px; padding:10px 12px; font-size:14px}
-  .addbar button, .reset{background:var(--accent); color:#0b1220; border:0; border-radius:8px;
-    padding:10px 16px; font-weight:700; cursor:pointer; font-size:14px}
-  .reset{background:transparent; color:var(--muted); border:1px solid var(--line); font-weight:500; float:right}
   .empty{color:var(--muted); font-size:13px; font-style:italic; padding:8px 0}
   footer{margin-top:40px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
+  code{background:var(--panel2); padding:1px 6px; border-radius:5px; font-size:12px}
 </style>
 </head>
 <body>
@@ -74,114 +69,104 @@
 
   <!-- ===== 50 on the go ===== -->
   <h2>On the go <span class="count"><span id="goCount">0</span> shipped &middot; 50 target</span></h2>
-  <p class="hint">Seeded from the memory graph. Click a card to cycle <b>open &rarr; shipped &rarr; killed</b>. Killing one is a real win too &mdash; it clears the queue. <span style="color:var(--warn)">~20 slots still unnamed</span> &mdash; edit this file or just tell me the rest.</p>
+  <p class="hint">Projects already in flight, seeded from the working notes. A card turns green when shipped, dashed-grey when killed (deciding-not-to-finish clears the queue &mdash; that's a win too). <span style="color:var(--warn)">~20 slots still unnamed.</span></p>
   <div class="grid" id="inflight"></div>
 
   <!-- ===== 50 new ===== -->
   <h2>New &mdash; start &amp; ship <span class="count"><span id="newCount">0</span> / 50</span></h2>
-  <p class="hint">Log each brand-new project as you ship it. Click to toggle shipped/open; these don't get "killed" (a new one you drop just never gets logged).</p>
-  <div class="addbar">
-    <input id="newName" type="text" placeholder="Name a project you just shipped&hellip;" autocomplete="off">
-    <button id="addBtn">+ Shipped</button>
-  </div>
+  <p class="hint">Brand-new projects, logged with a ship date as each one lands.</p>
   <div class="grid" id="newgrid"></div>
   <div class="empty" id="newEmpty">Nothing shipped from scratch yet. The first one's the hardest.</div>
 
-  <button class="reset" id="resetBtn" title="clear saved progress in this browser">reset progress</button>
   <footer>
-    Live burn-down for the <a href="index.html">2026 goals board</a>. State saves to this browser (localStorage).<br>
-    In-flight list seeded 1 June 2026 from the memory graph &mdash; not exhaustive; the 50 is the target, the cards are a starting set.
+    Live burn-down for the <a href="index.html">2026 goals board</a>. This is a <b>public commitment</b>, so progress is
+    authoritative &mdash; it lives in the repo, not your browser. Each ship is a git commit: a timestamped, public record.<br>
+    Update by editing the <code>DATA</code> block in this file (set a project's <code>state</code> to <code>"shipped"</code>/<code>"killed"</code>, or add a new one) and pushing.
   </footer>
 </div>
 
 <script>
-// ---- seed: 50-on-the-go, pulled from the memory-graph project nodes (≈30 real; rest to be named) ----
-const SEED = [
-  ["Echo","self-consistency LLM routing (enspyrco/echo)"],
-  ["SNES emulator","Rust/WASM — mode 07 stall is the blocker"],
-  ["The Dreaming Repo (Flux)","living repo: heartbeat, senses, dreams"],
-  ["Graph engine","extract Engram's CRDT mechanism, rule-of-three"],
-  ["Domain visualiser","2021 Flutter collab-draw, revived"],
-  ["Symposium","8-figure multi-agent debate over LiveKit"],
-  ["Agent-operator","k8s-style Agent CRD + controller"],
-  ["/consolidate skill","v5 — affective markers + parallel agents"],
-  ["Consolidation eval","5-dim scoring, polynomial response surface"],
-  ["Memory consolidation research","five-domain sweep + experiment"],
-  ["Persona experiment","10-PR forward A/B cohort, blind triage"],
-  ["Language typology platform","typology → CS-concept mapping probe"],
-  ["Pattern Battle","voice quiz + FSRS knowledge graph"],
-  ["Presentation Level-Up","synthetic rehearsal audience"],
-  ["Forge","planner/builder/evaluator CLI loop"],
-  ["Token dashboard","accurate Claude token accounting"],
-  ["Infra consolidation","7-repo merge → multi-tenant monorepo"],
-  ["Stage / Dreamfinder","the room-body surface for the agent"],
-  ["Graph↔Flux integration","dream cycles strengthen used edges"],
-  ["Matrix chat superbridge","bridge for Imagineering + AMR"],
-  ["Love agent","relationship corpus / agent"],
-  ["Recycled Sound","xdeca project"],
-  ["Continuwuity contribution","upstream Matrix server work"],
-  ["My Train ETA","Flutter transit app"],
-  ["WhatsApp bot","Baileys-based personal posting"],
-  ["Fake-me Discord","persona Discord bot"],
-  ["CLI tools suite","gmail/gdrive/signal/telegram/outline/kan"],
-  ["Autoresearch exploration","Karpathy self-modifying agents"],
-  ["CV site","nickmeinhold/cv"],
-  ["Callonclare n8n","productivity-course automation"]
-];
+// ============================================================================
+//  SINGLE SOURCE OF TRUTH — committed to the repo, identical for every visitor.
+//  To record progress: change a state below (or add an entry) and `git push`.
+//  The commit history is itself the public proof of what shipped, and when.
+// ============================================================================
+const DATA = {
+  // 50 already on the go. state: "open" | "shipped" | "killed". Add "when":"YYYY-MM-DD" when shipped.
+  inflight: [
+    {name:"Echo", desc:"self-consistency LLM routing (enspyrco/echo)", state:"open"},
+    {name:"SNES emulator", desc:"Rust/WASM — mode 07 stall is the blocker", state:"open"},
+    {name:"The Dreaming Repo (Flux)", desc:"living repo: heartbeat, senses, dreams", state:"open"},
+    {name:"Graph engine", desc:"extract Engram's CRDT mechanism, rule-of-three", state:"open"},
+    {name:"Domain visualiser", desc:"2021 Flutter collab-draw, revived", state:"open"},
+    {name:"Symposium", desc:"8-figure multi-agent debate over LiveKit", state:"open"},
+    {name:"Agent-operator", desc:"k8s-style Agent CRD + controller", state:"open"},
+    {name:"/consolidate skill", desc:"v5 — affective markers + parallel agents", state:"open"},
+    {name:"Consolidation eval", desc:"5-dim scoring, polynomial response surface", state:"open"},
+    {name:"Memory consolidation research", desc:"five-domain sweep + experiment", state:"open"},
+    {name:"Persona experiment", desc:"10-PR forward A/B cohort, blind triage", state:"open"},
+    {name:"Language typology platform", desc:"typology → CS-concept mapping probe", state:"open"},
+    {name:"Pattern Battle", desc:"voice quiz + FSRS knowledge graph", state:"open"},
+    {name:"Presentation Level-Up", desc:"synthetic rehearsal audience", state:"open"},
+    {name:"Forge", desc:"planner/builder/evaluator CLI loop", state:"open"},
+    {name:"Token dashboard", desc:"accurate Claude token accounting", state:"open"},
+    {name:"Infra consolidation", desc:"7-repo merge → multi-tenant monorepo", state:"open"},
+    {name:"Stage / Dreamfinder", desc:"the room-body surface for the agent", state:"open"},
+    {name:"Graph↔Flux integration", desc:"dream cycles strengthen used edges", state:"open"},
+    {name:"Matrix chat superbridge", desc:"bridge for Imagineering + AMR", state:"open"},
+    {name:"Love agent", desc:"relationship corpus / agent", state:"open"},
+    {name:"Recycled Sound", desc:"xdeca project", state:"open"},
+    {name:"Continuwuity contribution", desc:"upstream Matrix server work", state:"open"},
+    {name:"My Train ETA", desc:"Flutter transit app", state:"open"},
+    {name:"WhatsApp bot", desc:"Baileys-based personal posting", state:"open"},
+    {name:"Fake-me Discord", desc:"persona Discord bot", state:"open"},
+    {name:"CLI tools suite", desc:"gmail/gdrive/signal/telegram/outline/kan", state:"open"},
+    {name:"Autoresearch exploration", desc:"Karpathy self-modifying agents", state:"open"},
+    {name:"CV site", desc:"nickmeinhold/cv", state:"open"},
+    {name:"Callonclare n8n", desc:"productivity-course automation", state:"open"}
+  ],
+  // 50 to start AND ship from scratch. Add an entry (with ship date) as each lands.
+  newp: [
+    // {name:"…", when:"2026-06-…"},
+  ]
+};
 
 const DAY=86400000;
 const YEAR_START=new Date(2026,0,1), YEAR_END=new Date(2026,11,31);
-const KEY="goals2026_projects_v1";
-
-function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}} }
-function save(s){ localStorage.setItem(KEY, JSON.stringify(s)) }
-let state = load();
-state.inflight = state.inflight || {};   // name -> "open"|"shipped"|"killed"
-state.newp     = state.newp     || [];   // [{name, shipped}]
-
 const $=id=>document.getElementById(id);
 
 function render(){
-  // in-flight grid
   const ig=$("inflight"); ig.innerHTML="";
   let goShipped=0;
-  SEED.forEach(([name,desc])=>{
-    const st=state.inflight[name]||"open";
-    if(st==="shipped")goShipped++;
+  DATA.inflight.forEach(p=>{
+    if(p.state==="shipped")goShipped++;
     const row=document.createElement("div");
-    row.className="row"; row.dataset.state=st;
+    row.className="row"; row.dataset.state=p.state||"open";
     row.innerHTML='<div class="mark"></div><div><div class="name"></div><div class="desc"></div></div>';
-    row.querySelector(".name").textContent=name;
-    row.querySelector(".desc").textContent=desc;
-    row.onclick=()=>{ const order=["open","shipped","killed"];
-      const next=order[(order.indexOf(st)+1)%3];
-      state.inflight[name]=next; save(state); render(); };
+    row.querySelector(".name").textContent=p.name;
+    row.querySelector(".desc").textContent = p.state==="shipped" && p.when ? "shipped "+p.when : p.desc;
     ig.appendChild(row);
   });
 
-  // new grid
   const ng=$("newgrid"); ng.innerHTML="";
-  let newShipped=0;
-  state.newp.forEach((p,i)=>{
-    if(p.shipped)newShipped++;
+  DATA.newp.forEach(p=>{
     const row=document.createElement("div");
-    row.className="row"; row.dataset.state=p.shipped?"shipped":"open";
-    row.innerHTML='<div class="mark"></div><div><div class="name"></div><div class="desc">new · click to toggle · dbl-click to remove</div></div>';
+    row.className="row"; row.dataset.state="shipped";
+    row.innerHTML='<div class="mark"></div><div><div class="name"></div><div class="when"></div></div>';
     row.querySelector(".name").textContent=p.name;
-    row.onclick=()=>{ p.shipped=!p.shipped; save(state); render(); };
-    row.ondblclick=()=>{ state.newp.splice(i,1); save(state); render(); };
+    row.querySelector(".when").textContent = p.when ? "shipped "+p.when : "shipped";
     ng.appendChild(row);
   });
-  $("newEmpty").style.display = state.newp.length? "none":"block";
+  $("newEmpty").style.display = DATA.newp.length? "none":"block";
 
-  // counters
+  const newShipped=DATA.newp.length;
   const total=goShipped+newShipped;
   $("total").textContent=total;
   $("goCount").textContent=goShipped;
   $("newCount").textContent=newShipped;
   $("fill").style.width=Math.min(100,total)+"%";
 
-  // pace: where should the needle be today?
+  // pace needle — read-only, computed from today's date
   const now=new Date();
   const frac=Math.max(0,Math.min(1,(now-YEAR_START)/(YEAR_END-YEAR_START)));
   $("needle").style.left=(frac*100)+"%";
@@ -197,12 +182,6 @@ function render(){
     `${status} &middot; on-pace today ≈ <b>${expected}</b><br>`+
     `<b>${remaining}</b> to go &middot; <b>${weeksLeft}</b> weeks left &middot; need <b>${perWeek}/week</b>`;
 }
-
-$("addBtn").onclick=()=>{ const v=$("newName").value.trim(); if(!v)return;
-  state.newp.unshift({name:v,shipped:true}); $("newName").value=""; save(state); render(); };
-$("newName").addEventListener("keydown",e=>{ if(e.key==="Enter")$("addBtn").click(); });
-$("resetBtn").onclick=()=>{ if(confirm("Clear all saved progress in this browser?")){ localStorage.removeItem(KEY); state=load(); state.inflight={}; state.newp=[]; render(); } };
-
 render();
 </script>
 </body>
