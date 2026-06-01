@@ -73,7 +73,7 @@
   </div>
 
   <h2>Projects &amp; their ships <span class="count"><span id="shipCount">0</span> ships &middot; <span id="projCount">0</span> projects</span></h2>
-  <p class="hint">Seeded from working notes. Only items memory records as <em>shipped with a date</em> are ticked &mdash; the rest are open milestones (&#9675;) waiting for the real ship date. Tell me what's actually shipped and I'll log it.</p>
+  <p class="hint">Seeded from working notes &mdash; <em>nothing's ticked yet, on purpose</em>. A milestone only goes green when it's confirmed shipped <em>with a date</em> (not inferred, not "probably done"). Everything starts open (&#9675;).</p>
   <div id="projects"></div>
 
   <footer>
@@ -93,9 +93,9 @@
 const TARGET = 100;
 const DATA = [
   {name:"Symposium", kind:"evergreen", desc:"8-figure multi-agent debate over LiveKit",
-    ships:[{label:"163-exchange live debate", when:"May"}], open:["MPFB avatars","orchestrator test"]},
+    ships:[], open:["MPFB avatars","orchestrator test"]},
   {name:"Stage / Dreamfinder", kind:"evergreen", desc:"the room-body surface for the agent",
-    ships:[{label:"jukebox first show", when:"May"}], open:["next live show"]},
+    ships:[], open:["next live show"]},
 
   {name:"SNES emulator", kind:"evergreen", desc:"Rust/WASM",
     ships:[], open:["mode-07 background renders (the blocker)","$4016 input fix — confirm shipped?","audio watermark validation — confirm?"]},
