@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>100 Ships · 2026</title>
+<title>100 Projects · 2026</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1d212b; --ink:#e8ebf0; --muted:#9aa3b2;
@@ -13,242 +13,232 @@
   body{margin:0; background:var(--bg); color:var(--ink);
     font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     padding:40px 20px 96px}
-  .wrap{max-width:880px; margin:0 auto}
+  .wrap{max-width:900px; margin:0 auto}
   a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
   .back{font-size:13px; color:var(--muted)}
 
-  .score{display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; margin:14px 0 6px}
-  .big{font-size:60px; font-weight:750; line-height:1; font-variant-numeric:tabular-nums}
-  .big .of{font-size:28px; color:var(--muted); font-weight:600}
-  .pace{color:var(--muted); font-size:14px; line-height:1.4}
-  .pace b{color:var(--ink)}
-  .pace .ahead{color:var(--good)} .pace .behind{color:var(--warn)}
-  .track{height:10px; background:var(--track); border-radius:99px; margin:14px 0 4px; overflow:hidden; position:relative}
-  .fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); border-radius:99px; width:0; transition:width .3s}
+  /* breadcrumb */
+  .crumbs{display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:16px 0 4px; font-size:13px}
+  .crumbs .c{color:var(--accent); cursor:pointer}
+  .crumbs .c:hover{text-decoration:underline}
+  .crumbs .sep{color:var(--kill)}
+  .crumbs .cur{color:var(--muted); cursor:default}
+
+  /* contextual header */
+  .head{margin:6px 0 4px}
+  .htitle{font-size:30px; font-weight:750; line-height:1.1}
+  .hsub{color:var(--muted); font-size:14px; margin-top:4px}
+  .big{font-size:58px; font-weight:750; line-height:1; font-variant-numeric:tabular-nums}
+  .big .of{font-size:26px; color:var(--muted); font-weight:600}
+  .scorebar{display:flex; gap:26px; align-items:flex-end; flex-wrap:wrap}
+  .pace{color:var(--muted); font-size:13px; line-height:1.4}
+  .pace b{color:var(--ink)} .pace .ahead{color:var(--good)} .pace .behind{color:var(--warn)}
+
+  .track{height:9px; background:var(--track); border-radius:99px; margin:14px 0 4px; overflow:hidden; position:relative}
+  .fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); border-radius:99px; width:0; transition:width .35s}
   .needle{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--warn); opacity:.7}
   .tracklabels{display:flex; justify-content:space-between; color:var(--muted); font-size:11px}
-  .def{color:var(--muted); font-size:13px; margin:18px 0 6px; padding:10px 14px; background:var(--panel); border-left:3px solid var(--accent); border-radius:0 8px 8px 0}
-  .def b{color:var(--ink)}
 
-  h2{font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
-    margin:34px 0 6px; border-bottom:1px solid var(--line); padding-bottom:8px;
-    display:flex; justify-content:space-between; align-items:baseline}
-  h2 .count{color:var(--ink); font-variant-numeric:tabular-nums}
-  .hint{color:var(--muted); font-size:13px; margin:0 0 14px}
+  .hint{color:var(--muted); font-size:12.5px; margin:18px 0 12px}
 
-  .proj{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:8px 0}
-  .proj.has-ships{border-color:#2f4a36}
-  .phead{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
-  .pname{font-weight:650; font-size:15px}
-  .badge{font-size:11px; font-weight:700; padding:1px 8px; border-radius:99px; background:var(--track); color:var(--muted); white-space:nowrap}
-  .badge.lit{background:var(--good); color:#0b1220}
-  .kind{font-size:11px; color:var(--kill); border:1px solid var(--line); padding:0 6px; border-radius:99px}
-  .pdesc{color:var(--muted); font-size:12px; flex:1 1 100%}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:9px}
+  .tile{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:11px 13px; transition:.14s; position:relative; overflow:hidden}
+  .tile.zoom{cursor:pointer} .tile.zoom:hover{border-color:var(--accent); transform:translateY(-1px)}
+  .tile.done{border-color:#2f4a36; background:var(--panel2)}
+  .trow{display:flex; gap:9px; align-items:flex-start}
+  .mark{flex:0 0 auto; width:18px; height:18px; border:1.5px solid var(--track); border-radius:5px; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#0b1220}
+  .tile.done .mark{background:var(--good); border-color:var(--good)}
+  .tile.done .mark::after{content:"\2713"}
+  .tile.part .mark{border-color:var(--accent)}
+  .tname{font-weight:650; font-size:14px}
+  .tdesc{color:var(--muted); font-size:11.5px; margin-top:1px}
+  .tmeta{display:flex; gap:8px; align-items:center; margin-top:7px; font-size:11px; color:var(--muted)}
+  .tmeta .when{color:var(--good); font-variant-numeric:tabular-nums}
+  .into{margin-left:auto; color:var(--accent); font-weight:700; white-space:nowrap}
+  .minibar{height:4px; background:var(--track); border-radius:99px; margin-top:8px; overflow:hidden}
+  .minifill{height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0}
+  .tag{font-size:10px; color:var(--kill); border:1px solid var(--line); padding:0 6px; border-radius:99px}
 
-  /* versions */
-  .ver{margin:8px 0 2px; padding:7px 10px; background:var(--panel2); border:1px solid var(--line); border-radius:8px}
-  .ver.shipped{border-color:var(--good)}
-  .vhead{display:flex; gap:8px; align-items:baseline; font-size:13px}
-  .vtick{width:16px; text-align:center; font-weight:800}
-  .ver.shipped .vtick{color:var(--good)} .ver .vtick{color:var(--track)}
-  .vlabel{font-weight:600}
-  .vwhen{font-size:11px; color:var(--good); font-variant-numeric:tabular-nums}
-  .vprog{font-size:11px; color:var(--muted); margin-left:auto}
-
-  /* milestones (parts) */
-  .ms{list-style:none; margin:6px 0 0 24px; padding:0}
-  .ms li{display:flex; gap:7px; align-items:baseline; padding:2px 0; font-size:12px; color:var(--muted)}
-  .ms .mtick{flex:0 0 auto; width:13px; text-align:center}
-  .ms li.done{color:var(--ink)} .ms li.done .mtick{color:var(--good)}
-  .ms li.todo .mtick{color:var(--track)}
-
-  footer{margin-top:38px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
+  footer{margin-top:40px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
   code{background:var(--panel2); padding:1px 6px; border-radius:5px; font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="index.html">&larr; 2026 goals</a>
-
-  <div class="score">
-    <div class="big"><span id="total">0</span><span class="of"> / 100</span></div>
-    <div class="pace" id="pace">&nbsp;</div>
-  </div>
-  <div class="track"><div class="fill" id="fill"></div><div class="needle" id="needle" title="where you should be today"></div></div>
-  <div class="tracklabels"><span>Jan 2026</span><span>amber line = on-pace marker</span><span>Dec 2026</span></div>
-
-  <div class="def">
-    A <b>ship</b> is a <b>shipped version</b> of a long-running project (v1, v2&hellip; &mdash; each a dated, demonstrable release) <b>or a shipped one-shot project</b>.
-    <b>Milestones</b> are the <em>parts</em> &mdash; the checklist inside a version (or inside a one-shot). They show how close the next ship is; the version/project is what counts toward the 100.
-  </div>
-
-  <h2>Projects, versions &amp; milestones <span class="count"><span id="shipCount">0</span> ships &middot; <span id="projCount">0</span> projects</span></h2>
-  <p class="hint">Seeded from working notes &mdash; <em>nothing's ticked yet, on purpose</em>. A version (or one-shot) only goes green when it's confirmed shipped <em>with a date</em>. Milestones (&#9675;) are the parts inside.</p>
-  <div id="projects"></div>
+  <div class="crumbs" id="crumbs"></div>
+  <div class="head" id="head"></div>
+  <div class="track"><div class="fill" id="fill"></div><div class="needle" id="needle" title="on-pace marker (year)"></div></div>
+  <div class="tracklabels" id="tlabels"><span>Jan 2026</span><span>amber = on-pace</span><span>Dec 2026</span></div>
+  <p class="hint" id="hint"></p>
+  <div class="grid" id="grid"></div>
 
   <footer>
-    Live ship-count for the <a href="index.html">2026 goals board</a> &mdash; a <b>public commitment</b>. Progress is authoritative: it lives in the repo, and every shipped version is a dated git commit (the history <em>is</em> the proof).<br>
-    Update by editing the <code>DATA</code> block: mark a version/project <code>shipped:true</code> with a <code>when</code>, tick its milestones <code>done:true</code>, or add a new version. Then push.
+    Live, zoomable ship-tracker for the <a href="index.html">2026 goals board</a> &mdash; a <b>public commitment</b>.
+    Click any project to zoom into its versions; click a version for its milestones; keep clicking to go deeper. Breadcrumb to climb back.
+    Zoom is read-only navigation &mdash; progress lives in the repo, and updating it is a dated git commit. Edit the <code>DATA</code> tree (set <code>done:true</code> + a <code>when</code>) and push.
   </footer>
 </div>
 
 <script>
 // ============================================================================
-//  SINGLE SOURCE OF TRUTH — committed to the repo, identical for every visitor.
-//  The 100 counts SHIPS = shipped VERSIONS (long projects) + shipped ONE-SHOTS.
-//  MILESTONES are the parts inside a version/project — progress, not the count.
+//  ONE RECURSIVE TREE — committed to the repo, identical for every visitor.
+//  Top level = the 100 PROJECTS. Each project may nest versions; each version,
+//  milestones; and so on — "keep clicking" works at any depth.
 //
-//  evergreen: { name, kind:"evergreen", desc, versions:[ {label, when, shipped, milestones:[{label,done}]} ] }
-//  one-shot:  { name, kind:"oneshot",   desc, when, shipped, milestones:[{label,done}] }
+//  node = { name, desc?, tag?, when?, done?, children?:[ ...nodes ] }
+//   • A node is DONE if done:true, OR it has children and they're ALL done.
+//   • The 100 counts top-level projects that are done. Depth is just *how full*
+//     each project's bar is. "Done when you say" — set done:true at any level.
 //
-//  Nothing is shipped:true yet — by design. A green tick needs a confirmed date.
+//  Nothing is done yet, on purpose. A tick needs a confirmed date.
 // ============================================================================
 const TARGET = 100;
-const DATA = [
-  {name:"SNES emulator", kind:"evergreen", desc:"Rust/WASM", versions:[
-    {label:"v1 — runs a game start to finish", when:"", shipped:false, milestones:[
-      {label:"mode-07 background renders (the blocker)", done:false},
-      {label:"$4016 input fix", done:false},
-      {label:"audio watermark validation", done:false}]}]},
-  {name:"Symposium", kind:"evergreen", desc:"8-figure multi-agent debate over LiveKit", versions:[
-    {label:"v1 — first public-ready debate", when:"", shipped:false, milestones:[
-      {label:"163-exchange live debate ran", done:false},
-      {label:"MPFB avatars", done:false},
-      {label:"orchestrator test", done:false}]}]},
-  {name:"Stage / Dreamfinder", kind:"evergreen", desc:"the room-body surface for the agent", versions:[
-    {label:"v1 — first live show", when:"", shipped:false, milestones:[
-      {label:"jukebox first show ran", done:false}]}]},
-  {name:"The Dreaming Repo (Flux)", kind:"evergreen", desc:"living repo: heartbeat, senses, dreams", versions:[
-    {label:"next release", when:"", shipped:false, milestones:[{label:"flux plan steps 6–9", done:false}]}]},
-  {name:"Graph engine", kind:"evergreen", desc:"extract Engram's CRDT mechanism, rule-of-three", versions:[
-    {label:"v1 — core + first plugin", when:"", shipped:false, milestones:[{label:"domvis 7-step seam", done:false}]}]},
-  {name:"/consolidate skill", kind:"evergreen", desc:"the consolidation pipeline", versions:[
-    {label:"v5", when:"", shipped:false, milestones:[]}]},
-  {name:"Consolidation eval", kind:"evergreen", desc:"5-dim scoring, response-surface", versions:[
-    {label:"next release", when:"", shipped:false, milestones:[{label:"polynomial regression over ~10 variants", done:false}]}]},
-  {name:"Persona experiment", kind:"evergreen", desc:"10-PR forward A/B cohort", versions:[
-    {label:"results writeup", when:"", shipped:false, milestones:[{label:"blind triage of the closed cohort", done:false}]}]},
-  {name:"Language typology platform", kind:"evergreen", desc:"typology → CS-concept mapping", versions:[
-    {label:"validity packet", when:"", shipped:false, milestones:[
-      {label:"ARM worker /probe + /translate live", done:false},
-      {label:"validity packet written", done:false}]}]},
-  {name:"Memory consolidation research", kind:"evergreen", desc:"five-domain sweep + experiment", versions:[
-    {label:"next milestone", when:"", shipped:false, milestones:[]}]},
-  {name:"Echo", kind:"evergreen", desc:"self-consistency LLM routing", versions:[
-    {label:"next release", when:"", shipped:false, milestones:[]}]},
-  {name:"Agent-operator", kind:"evergreen", desc:"k8s-style Agent CRD + controller", versions:[
-    {label:"v1", when:"", shipped:false, milestones:[]}]},
-  {name:"Graph↔Flux integration", kind:"evergreen", desc:"dream cycles strengthen used edges", versions:[
-    {label:"v1", when:"", shipped:false, milestones:[]}]},
-  {name:"Forge", kind:"evergreen", desc:"planner/builder/evaluator CLI loop", versions:[
-    {label:"next release", when:"", shipped:false, milestones:[]}]},
-  {name:"Infra consolidation", kind:"evergreen", desc:"7-repo merge → multi-tenant monorepo", versions:[
-    {label:"v1 — merged monorepo", when:"", shipped:false, milestones:[]}]},
-  {name:"Matrix chat superbridge", kind:"evergreen", desc:"bridge for Imagineering + AMR", versions:[
-    {label:"v1", when:"", shipped:false, milestones:[]}]},
-  {name:"Continuwuity contribution", kind:"evergreen", desc:"upstream Matrix server work", versions:[
-    {label:"first merged PR", when:"", shipped:false, milestones:[]}]},
-  {name:"Domain visualiser", kind:"evergreen", desc:"2021 Flutter collab-draw, revived", versions:[
-    {label:"v1", when:"", shipped:false, milestones:[]}]},
-  {name:"CLI tools suite", kind:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan", versions:[
-    {label:"next tool", when:"", shipped:false, milestones:[]}]},
-  {name:"Love agent", kind:"evergreen", desc:"relationship corpus / agent", versions:[
-    {label:"v1", when:"", shipped:false, milestones:[]}]},
-  {name:"Recycled Sound", kind:"evergreen", desc:"xdeca project", versions:[
-    {label:"next release", when:"", shipped:false, milestones:[]}]},
+const ms = (label) => ({name:label});                       // milestone leaf
+const ver = (label, milestones=[]) => ({name:label, tag:"version", children:milestones});
 
-  // one-shots — the whole project ships once
-  {name:"Pattern Battle", kind:"oneshot", desc:"voice quiz + FSRS knowledge graph", when:"", shipped:false, milestones:[{label:"playable v1 on GitHub Pages", done:false}]},
-  {name:"Presentation Level-Up", kind:"oneshot", desc:"synthetic rehearsal audience", when:"", shipped:false, milestones:[]},
-  {name:"Token dashboard", kind:"oneshot", desc:"accurate Claude token accounting", when:"", shipped:false, milestones:[]},
-  {name:"My Train ETA", kind:"oneshot", desc:"Flutter transit app", when:"", shipped:false, milestones:[]},
-  {name:"WhatsApp bot", kind:"oneshot", desc:"Baileys-based personal posting", when:"", shipped:false, milestones:[]},
-  {name:"Fake-me Discord", kind:"oneshot", desc:"persona Discord bot", when:"", shipped:false, milestones:[]}
+const DATA = [
+  {name:"SNES emulator", tag:"evergreen", desc:"Rust/WASM", children:[
+    ver("v1 — runs a game start to finish", [
+      ms("mode-07 background renders (the blocker)"), ms("$4016 input fix"), ms("audio watermark validation")])]},
+  {name:"Symposium", tag:"evergreen", desc:"8-figure multi-agent debate over LiveKit", children:[
+    ver("v1 — first public-ready debate", [
+      ms("163-exchange live debate ran (Apr — demo)"), ms("MPFB avatars"), ms("orchestrator test"), ms("hosted onboarding")])]},
+  {name:"Stage / Dreamfinder", tag:"evergreen", desc:"the room-body surface for the agent", children:[
+    ver("v1 — show-control at a meetup", [
+      ms("first jukebox show ran (May — demo)"), ms("sprint mode (core feature)"), ms("iPhone mic input"), ms("live PR feed on TV")])]},
+  {name:"The Dreaming Repo (Flux)", tag:"evergreen", desc:"living repo: heartbeat, senses, dreams", children:[
+    ver("next release", [ms("flux plan steps 6–9")])]},
+  {name:"Graph engine", tag:"evergreen", desc:"extract Engram's CRDT mechanism", children:[
+    ver("v1 — core + first plugin", [ms("domvis 7-step seam")])]},
+  {name:"/consolidate skill", tag:"evergreen", desc:"the consolidation pipeline", children:[ ver("v5", []) ]},
+  {name:"Consolidation eval", tag:"evergreen", desc:"5-dim scoring, response-surface", children:[
+    ver("next release", [ms("polynomial regression over ~10 variants")])]},
+  {name:"Persona experiment", tag:"evergreen", desc:"10-PR forward A/B cohort", children:[
+    ver("results writeup", [ms("blind triage of the closed cohort")])]},
+  {name:"Language typology platform", tag:"evergreen", desc:"typology → CS-concept mapping", children:[
+    ver("validity packet", [ms("ARM worker /probe + /translate live"), ms("validity packet written")])]},
+  {name:"Memory consolidation research", tag:"evergreen", desc:"five-domain sweep + experiment", children:[ ver("next milestone", []) ]},
+  {name:"Echo", tag:"evergreen", desc:"self-consistency LLM routing", children:[ ver("next release", []) ]},
+  {name:"Agent-operator", tag:"evergreen", desc:"k8s-style Agent CRD + controller", children:[ ver("v1", []) ]},
+  {name:"Graph↔Flux integration", tag:"evergreen", desc:"dream cycles strengthen used edges", children:[ ver("v1", []) ]},
+  {name:"Forge", tag:"evergreen", desc:"planner/builder/evaluator CLI loop", children:[ ver("next release", []) ]},
+  {name:"Infra consolidation", tag:"evergreen", desc:"7-repo merge → monorepo", children:[ ver("v1 — merged monorepo", []) ]},
+  {name:"Matrix chat superbridge", tag:"evergreen", desc:"bridge for Imagineering + AMR", children:[ ver("v1", []) ]},
+  {name:"Continuwuity contribution", tag:"evergreen", desc:"upstream Matrix server work", children:[ ver("first merged PR", []) ]},
+  {name:"Domain visualiser", tag:"evergreen", desc:"2021 Flutter collab-draw, revived", children:[ ver("v1", []) ]},
+  {name:"CLI tools suite", tag:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan", children:[ ver("next tool", []) ]},
+  {name:"Love agent", tag:"evergreen", desc:"relationship corpus / agent", children:[ ver("v1", []) ]},
+  {name:"Recycled Sound", tag:"evergreen", desc:"xdeca project", children:[ ver("next release", []) ]},
+
+  // one-shots — children are milestones directly (no version layer); done when all done
+  {name:"Pattern Battle", tag:"one-shot", desc:"voice quiz + FSRS knowledge graph", children:[ ms("playable v1 on GitHub Pages") ]},
+  {name:"Presentation Level-Up", tag:"one-shot", desc:"synthetic rehearsal audience", children:[]},
+  {name:"Token dashboard", tag:"one-shot", desc:"accurate Claude token accounting", children:[]},
+  {name:"My Train ETA", tag:"one-shot", desc:"Flutter transit app", children:[]},
+  {name:"WhatsApp bot", tag:"one-shot", desc:"Baileys-based personal posting", children:[]},
+  {name:"Fake-me Discord", tag:"one-shot", desc:"persona Discord bot", children:[]}
 ];
 
 const DAY=86400000;
 const YEAR_START=new Date(2026,0,1), YEAR_END=new Date(2026,11,31);
 const $=id=>document.getElementById(id);
 
-function shipsFor(p){ return p.kind==="evergreen" ? p.versions.filter(v=>v.shipped).length : (p.shipped?1:0); }
+function isDone(n){ return n.done===true || (n.children && n.children.length>0 && n.children.every(isDone)); }
+function frac(n){
+  if(n.done===true) return 1;
+  if(!n.children || !n.children.length) return n.done?1:0;
+  return n.children.reduce((s,c)=>s+frac(c),0)/n.children.length;
+}
+
+let path = [];  // indices from root to current focus
+
+function focusNode(){ // null at root
+  let cur=null, list=DATA;
+  for(const i of path){ cur=list[i]; list=cur.children||[]; }
+  return cur;
+}
+function focusChildren(){
+  let list=DATA;
+  for(const i of path){ list=(list[i].children)||[]; }
+  return list;
+}
 
 function render(){
-  const box=$("projects"); box.innerHTML="";
-  let shipped=0;
-  const sorted=[...DATA].sort((a,b)=>shipsFor(b)-shipsFor(a));
-  sorted.forEach(p=>{
-    const n=shipsFor(p); shipped+=n;
-    const el=document.createElement("div");
-    el.className="proj"+(n?" has-ships":"");
-    let badge;
-    if(p.kind==="evergreen"){
-      badge = n ? ('▸ '+n+'/'+p.versions.length+' versions shipped') : (p.versions.length+' version'+(p.versions.length>1?'s':'')+' planned');
-    } else {
-      badge = p.shipped ? ('✓ shipped'+(p.when?' '+p.when:'')) : 'one-shot · in progress';
-    }
-    el.innerHTML =
-      '<div class="phead">'+
-        '<span class="pname"></span>'+
-        '<span class="badge'+(n?' lit':'')+'"></span>'+
-        '<span class="kind">'+(p.kind==="evergreen"?"evergreen":"one-shot")+'</span>'+
-        '<span class="pdesc"></span>'+
+  const atRoot = path.length===0;
+  const cur = focusNode();
+  const children = focusChildren();
+
+  // breadcrumb
+  const cb=$("crumbs"); cb.innerHTML="";
+  const rootDone=DATA.filter(isDone).length;
+  const mk=(txt,depth,cls)=>{ const s=document.createElement("span"); s.className=cls; s.textContent=txt;
+    if(cls==="c") s.onclick=()=>{ path=path.slice(0,depth); render(); }; return s; };
+  cb.appendChild(mk("2026 · "+rootDone+"/"+TARGET, 0, atRoot?"cur":"c"));
+  path.forEach((idx,d)=>{
+    cb.appendChild(Object.assign(document.createElement("span"),{className:"sep",textContent:"›"}));
+    let list=DATA; for(let k=0;k<d;k++) list=list[path[k]].children;
+    const name=list[idx].name;
+    cb.appendChild(mk(name, d+1, d===path.length-1?"cur":"c"));
+  });
+
+  // contextual header + scorebar
+  const head=$("head");
+  if(atRoot){
+    const inProg=DATA.filter(d=>!isDone(d)&&frac(d)>0).length;
+    head.innerHTML='<div class="scorebar"><div class="big"><span id="big">'+rootDone+'</span><span class="of"> / '+TARGET+'</span></div><div class="pace" id="pace"></div></div>';
+    $("tlabels").style.display="flex"; $("needle").style.display="block";
+    const now=new Date();
+    const fr=Math.max(0,Math.min(1,(now-YEAR_START)/(YEAR_END-YEAR_START)));
+    $("needle").style.left=(fr*100)+"%";
+    const expected=Math.round(fr*TARGET);
+    const weeksLeft=Math.max(0,Math.round((YEAR_END-now)/(7*DAY)));
+    const remaining=Math.max(0,TARGET-rootDone);
+    const perWeek=weeksLeft?(remaining/weeksLeft).toFixed(1):"—";
+    const delta=rootDone-expected;
+    const status=delta>=0?'<span class="ahead">'+delta+' ahead</span>':'<span class="behind">'+(-delta)+' behind</span>';
+    $("pace").innerHTML=status+' · on-pace today ≈ <b>'+expected+'</b> &nbsp;|&nbsp; '+inProg+' in progress<br><b>'+remaining+'</b> to go · <b>'+weeksLeft+'</b> weeks · need <b>'+perWeek+'/week</b>';
+    $("fill").style.width=(rootDone/TARGET*100)+"%";
+  } else {
+    const done=children.filter(isDone).length, tot=children.length;
+    head.innerHTML='<div class="htitle"></div><div class="hsub"></div>';
+    head.querySelector(".htitle").textContent=cur.name;
+    head.querySelector(".hsub").textContent =
+      (cur.desc?cur.desc+' — ':'') + (tot? done+' / '+tot+' '+(cur.tag==="version"||cur.tag==="one-shot"?"milestones":"inside")+' done' : 'no items yet — add some in DATA');
+    $("tlabels").style.display="none"; $("needle").style.display="none";
+    $("fill").style.width=(frac(cur)*100)+"%";
+  }
+
+  // hint
+  $("hint").innerHTML = atRoot
+    ? 'Your 100. <b>Click a project to zoom in</b> → versions → milestones. Nothing ticked yet — a project goes green when it (or all its parts) is confirmed done, with a date.'
+    : 'Click an item with a <span style="color:var(--accent)">▸ inside</span> to go deeper, or a breadcrumb above to climb back out.';
+
+  // tiles
+  const g=$("grid"); g.innerHTML="";
+  children.forEach((c,i)=>{
+    const done=isDone(c), f=frac(c), kids=c.children&&c.children.length;
+    const part = !done && f>0;
+    const tile=document.createElement("div");
+    tile.className="tile"+(kids?" zoom":"")+(done?" done":part?" part":"");
+    let meta="";
+    if(done) meta='<span class="when">'+(c.when?'✓ '+c.when:'✓ done')+'</span>';
+    else if(kids) meta='<span>'+c.children.filter(isDone).length+'/'+c.children.length+'</span><span class="into">▸ inside</span>';
+    else meta='<span>not done</span>';
+    tile.innerHTML=
+      '<div class="trow"><div class="mark"></div>'+
+        '<div style="flex:1 1 auto;min-width:0"><div class="tname"></div>'+
+          (c.desc?'<div class="tdesc"></div>':'')+
+          '<div class="tmeta">'+(c.tag?'<span class="tag">'+c.tag+'</span>':'')+meta+'</div>'+
+          (kids&&!done?'<div class="minibar"><div class="minifill" style="width:'+(f*100)+'%"></div></div>':'')+
+        '</div>'+
       '</div>';
-    el.querySelector(".pname").textContent=p.name;
-    el.querySelector(".badge").textContent=badge;
-    el.querySelector(".pdesc").textContent=p.desc;
-
-    if(p.kind==="evergreen"){
-      p.versions.forEach(v=>renderVersion(el,v));
-    } else {
-      renderMilestones(el, p.milestones, p.shipped);
-    }
-    box.appendChild(el);
+    tile.querySelector(".tname").textContent=c.name;
+    if(c.desc) tile.querySelector(".tdesc").textContent=c.desc;
+    if(kids) tile.onclick=()=>{ path=[...path,i]; render(); };
+    g.appendChild(tile);
   });
-
-  $("total").textContent=shipped;
-  $("shipCount").textContent=shipped;
-  $("projCount").textContent=DATA.length;
-  $("fill").style.width=Math.min(100,shipped/TARGET*100)+"%";
-
-  const now=new Date();
-  const frac=Math.max(0,Math.min(1,(now-YEAR_START)/(YEAR_END-YEAR_START)));
-  $("needle").style.left=(frac*100)+"%";
-  const expected=Math.round(frac*TARGET);
-  const weeksLeft=Math.max(0,Math.round((YEAR_END-now)/(7*DAY)));
-  const remaining=Math.max(0,TARGET-shipped);
-  const perWeek=weeksLeft? (remaining/weeksLeft).toFixed(1):"—";
-  const delta=shipped-expected;
-  const status = delta>=0
-    ? '<span class="ahead">'+delta+' ahead of pace</span>'
-    : '<span class="behind">'+(-delta)+' behind pace</span>';
-  $("pace").innerHTML =
-    status+' &middot; on-pace today ≈ <b>'+expected+'</b><br>'+
-    '<b>'+remaining+'</b> ships to go &middot; <b>'+weeksLeft+'</b> weeks left &middot; need <b>'+perWeek+'/week</b>';
-}
-
-function renderVersion(el, v){
-  const done=v.milestones.filter(m=>m.done).length, tot=v.milestones.length;
-  const div=document.createElement("div"); div.className="ver"+(v.shipped?" shipped":"");
-  div.innerHTML='<div class="vhead"><span class="vtick">'+(v.shipped?'✓':'○')+'</span>'+
-    '<span class="vlabel"></span>'+
-    (v.shipped&&v.when?'<span class="vwhen"></span>':'')+
-    '<span class="vprog">'+(v.shipped?'shipped':(tot?done+'/'+tot+' milestones':'no milestones yet'))+'</span></div>';
-  div.querySelector(".vlabel").textContent=v.label;
-  if(v.shipped&&v.when) div.querySelector(".vwhen").textContent=v.when;
-  el.appendChild(div);
-  if(v.milestones.length) renderMilestones(div, v.milestones, false);
-}
-
-function renderMilestones(parent, milestones, projShipped){
-  if(!milestones||!milestones.length) return;
-  const ul=document.createElement("ul"); ul.className="ms";
-  milestones.forEach(m=>{
-    const li=document.createElement("li"); li.className=(m.done||projShipped)?"done":"todo";
-    li.innerHTML='<span class="mtick">'+((m.done||projShipped)?'✓':'○')+'</span><span class="mlbl"></span>';
-    li.querySelector(".mlbl").textContent=m.label;
-    ul.appendChild(li);
-  });
-  parent.appendChild(ul);
 }
 render();
 </script>
