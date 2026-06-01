@@ -44,13 +44,23 @@
   .badge.lit{background:var(--good); color:#0b1220}
   .kind{font-size:11px; color:var(--kill); border:1px solid var(--line); padding:0 6px; border-radius:99px}
   .pdesc{color:var(--muted); font-size:12px; flex:1 1 100%}
-  .ships{list-style:none; margin:8px 0 0; padding:0}
-  .ships li{display:flex; gap:8px; align-items:baseline; padding:3px 0; font-size:13px}
-  .tick{flex:0 0 auto; width:16px; text-align:center; font-weight:800}
-  li.done .tick{color:var(--good)} li.done{color:var(--ink)}
-  li.open .tick{color:var(--track)} li.open{color:var(--muted)}
-  .when{flex:0 0 auto; font-size:11px; color:var(--good); width:34px; font-variant-numeric:tabular-nums}
-  li.open .when{color:transparent}
+
+  /* versions */
+  .ver{margin:8px 0 2px; padding:7px 10px; background:var(--panel2); border:1px solid var(--line); border-radius:8px}
+  .ver.shipped{border-color:var(--good)}
+  .vhead{display:flex; gap:8px; align-items:baseline; font-size:13px}
+  .vtick{width:16px; text-align:center; font-weight:800}
+  .ver.shipped .vtick{color:var(--good)} .ver .vtick{color:var(--track)}
+  .vlabel{font-weight:600}
+  .vwhen{font-size:11px; color:var(--good); font-variant-numeric:tabular-nums}
+  .vprog{font-size:11px; color:var(--muted); margin-left:auto}
+
+  /* milestones (parts) */
+  .ms{list-style:none; margin:6px 0 0 24px; padding:0}
+  .ms li{display:flex; gap:7px; align-items:baseline; padding:2px 0; font-size:12px; color:var(--muted)}
+  .ms .mtick{flex:0 0 auto; width:13px; text-align:center}
+  .ms li.done{color:var(--ink)} .ms li.done .mtick{color:var(--good)}
+  .ms li.todo .mtick{color:var(--track)}
 
   footer{margin-top:38px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:16px}
   code{background:var(--panel2); padding:1px 6px; border-radius:5px; font-size:12px}
@@ -68,127 +78,129 @@
   <div class="tracklabels"><span>Jan 2026</span><span>amber line = on-pace marker</span><span>Dec 2026</span></div>
 
   <div class="def">
-    A <b>ship</b> = one <b>dated, demonstrable</b> thing put into the world &mdash; a release, a working capability, a talk given, a doc published. <b>Showable, not "made progress."</b>
-    Some projects finish in one ship; the evergreen ones (SNES, the graph engine&hellip;) never "finish" &mdash; they just keep emitting ships all year. The 100 counts ships, not projects.
+    A <b>ship</b> is a <b>shipped version</b> of a long-running project (v1, v2&hellip; &mdash; each a dated, demonstrable release) <b>or a shipped one-shot project</b>.
+    <b>Milestones</b> are the <em>parts</em> &mdash; the checklist inside a version (or inside a one-shot). They show how close the next ship is; the version/project is what counts toward the 100.
   </div>
 
-  <h2>Projects &amp; their ships <span class="count"><span id="shipCount">0</span> ships &middot; <span id="projCount">0</span> projects</span></h2>
-  <p class="hint">Seeded from working notes &mdash; <em>nothing's ticked yet, on purpose</em>. A milestone only goes green when it's confirmed shipped <em>with a date</em> (not inferred, not "probably done"). Everything starts open (&#9675;).</p>
+  <h2>Projects, versions &amp; milestones <span class="count"><span id="shipCount">0</span> ships &middot; <span id="projCount">0</span> projects</span></h2>
+  <p class="hint">Seeded from working notes &mdash; <em>nothing's ticked yet, on purpose</em>. A version (or one-shot) only goes green when it's confirmed shipped <em>with a date</em>. Milestones (&#9675;) are the parts inside.</p>
   <div id="projects"></div>
 
   <footer>
-    Live ship-count for the <a href="index.html">2026 goals board</a> &mdash; a <b>public commitment</b>. Progress is authoritative: it lives in the repo, and every ship is a dated git commit (the history <em>is</em> the proof).<br>
-    Update by editing the <code>DATA</code> block in this file &mdash; move a milestone from <code>open</code> to a <code>when</code> date, or add a new project/ship &mdash; then push.
+    Live ship-count for the <a href="index.html">2026 goals board</a> &mdash; a <b>public commitment</b>. Progress is authoritative: it lives in the repo, and every shipped version is a dated git commit (the history <em>is</em> the proof).<br>
+    Update by editing the <code>DATA</code> block: mark a version/project <code>shipped:true</code> with a <code>when</code>, tick its milestones <code>done:true</code>, or add a new version. Then push.
   </footer>
 </div>
 
 <script>
 // ============================================================================
 //  SINGLE SOURCE OF TRUTH — committed to the repo, identical for every visitor.
-//  The 100 counts SHIPS: dated, demonstrable milestones.
-//  A ship is { label, when:"Mon" }.  An open milestone is just a string.
-//  To record a ship: move a label out of `open` into `ships` with a `when`. Then push.
-//  Only two items are pre-ticked — the only ones memory records shipped-with-a-date.
+//  The 100 counts SHIPS = shipped VERSIONS (long projects) + shipped ONE-SHOTS.
+//  MILESTONES are the parts inside a version/project — progress, not the count.
+//
+//  evergreen: { name, kind:"evergreen", desc, versions:[ {label, when, shipped, milestones:[{label,done}]} ] }
+//  one-shot:  { name, kind:"oneshot",   desc, when, shipped, milestones:[{label,done}] }
+//
+//  Nothing is shipped:true yet — by design. A green tick needs a confirmed date.
 // ============================================================================
 const TARGET = 100;
 const DATA = [
-  {name:"Symposium", kind:"evergreen", desc:"8-figure multi-agent debate over LiveKit",
-    ships:[], open:["MPFB avatars","orchestrator test"]},
-  {name:"Stage / Dreamfinder", kind:"evergreen", desc:"the room-body surface for the agent",
-    ships:[], open:["next live show"]},
+  {name:"SNES emulator", kind:"evergreen", desc:"Rust/WASM", versions:[
+    {label:"v1 — runs a game start to finish", when:"", shipped:false, milestones:[
+      {label:"mode-07 background renders (the blocker)", done:false},
+      {label:"$4016 input fix", done:false},
+      {label:"audio watermark validation", done:false}]}]},
+  {name:"Symposium", kind:"evergreen", desc:"8-figure multi-agent debate over LiveKit", versions:[
+    {label:"v1 — first public-ready debate", when:"", shipped:false, milestones:[
+      {label:"163-exchange live debate ran", done:false},
+      {label:"MPFB avatars", done:false},
+      {label:"orchestrator test", done:false}]}]},
+  {name:"Stage / Dreamfinder", kind:"evergreen", desc:"the room-body surface for the agent", versions:[
+    {label:"v1 — first live show", when:"", shipped:false, milestones:[
+      {label:"jukebox first show ran", done:false}]}]},
+  {name:"The Dreaming Repo (Flux)", kind:"evergreen", desc:"living repo: heartbeat, senses, dreams", versions:[
+    {label:"next release", when:"", shipped:false, milestones:[{label:"flux plan steps 6–9", done:false}]}]},
+  {name:"Graph engine", kind:"evergreen", desc:"extract Engram's CRDT mechanism, rule-of-three", versions:[
+    {label:"v1 — core + first plugin", when:"", shipped:false, milestones:[{label:"domvis 7-step seam", done:false}]}]},
+  {name:"/consolidate skill", kind:"evergreen", desc:"the consolidation pipeline", versions:[
+    {label:"v5", when:"", shipped:false, milestones:[]}]},
+  {name:"Consolidation eval", kind:"evergreen", desc:"5-dim scoring, response-surface", versions:[
+    {label:"next release", when:"", shipped:false, milestones:[{label:"polynomial regression over ~10 variants", done:false}]}]},
+  {name:"Persona experiment", kind:"evergreen", desc:"10-PR forward A/B cohort", versions:[
+    {label:"results writeup", when:"", shipped:false, milestones:[{label:"blind triage of the closed cohort", done:false}]}]},
+  {name:"Language typology platform", kind:"evergreen", desc:"typology → CS-concept mapping", versions:[
+    {label:"validity packet", when:"", shipped:false, milestones:[
+      {label:"ARM worker /probe + /translate live", done:false},
+      {label:"validity packet written", done:false}]}]},
+  {name:"Memory consolidation research", kind:"evergreen", desc:"five-domain sweep + experiment", versions:[
+    {label:"next milestone", when:"", shipped:false, milestones:[]}]},
+  {name:"Echo", kind:"evergreen", desc:"self-consistency LLM routing", versions:[
+    {label:"next release", when:"", shipped:false, milestones:[]}]},
+  {name:"Agent-operator", kind:"evergreen", desc:"k8s-style Agent CRD + controller", versions:[
+    {label:"v1", when:"", shipped:false, milestones:[]}]},
+  {name:"Graph↔Flux integration", kind:"evergreen", desc:"dream cycles strengthen used edges", versions:[
+    {label:"v1", when:"", shipped:false, milestones:[]}]},
+  {name:"Forge", kind:"evergreen", desc:"planner/builder/evaluator CLI loop", versions:[
+    {label:"next release", when:"", shipped:false, milestones:[]}]},
+  {name:"Infra consolidation", kind:"evergreen", desc:"7-repo merge → multi-tenant monorepo", versions:[
+    {label:"v1 — merged monorepo", when:"", shipped:false, milestones:[]}]},
+  {name:"Matrix chat superbridge", kind:"evergreen", desc:"bridge for Imagineering + AMR", versions:[
+    {label:"v1", when:"", shipped:false, milestones:[]}]},
+  {name:"Continuwuity contribution", kind:"evergreen", desc:"upstream Matrix server work", versions:[
+    {label:"first merged PR", when:"", shipped:false, milestones:[]}]},
+  {name:"Domain visualiser", kind:"evergreen", desc:"2021 Flutter collab-draw, revived", versions:[
+    {label:"v1", when:"", shipped:false, milestones:[]}]},
+  {name:"CLI tools suite", kind:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan", versions:[
+    {label:"next tool", when:"", shipped:false, milestones:[]}]},
+  {name:"Love agent", kind:"evergreen", desc:"relationship corpus / agent", versions:[
+    {label:"v1", when:"", shipped:false, milestones:[]}]},
+  {name:"Recycled Sound", kind:"evergreen", desc:"xdeca project", versions:[
+    {label:"next release", when:"", shipped:false, milestones:[]}]},
 
-  {name:"SNES emulator", kind:"evergreen", desc:"Rust/WASM",
-    ships:[], open:["mode-07 background renders (the blocker)","$4016 input fix — confirm shipped?","audio watermark validation — confirm?"]},
-  {name:"The Dreaming Repo (Flux)", kind:"evergreen", desc:"living repo: heartbeat, senses, dreams",
-    ships:[], open:["flux plan steps 6–9"]},
-  {name:"Graph engine", kind:"evergreen", desc:"extract Engram's CRDT mechanism, rule-of-three",
-    ships:[], open:["domvis 7-step seam"]},
-  {name:"Domain visualiser", kind:"evergreen", desc:"2021 Flutter collab-draw, revived",
-    ships:[], open:[]},
-  {name:"Agent-operator", kind:"evergreen", desc:"k8s-style Agent CRD + controller",
-    ships:[], open:[]},
-  {name:"/consolidate skill", kind:"evergreen", desc:"the consolidation pipeline",
-    ships:[], open:["v5 — confirm shipped?"]},
-  {name:"Consolidation eval", kind:"evergreen", desc:"5-dim scoring, response-surface",
-    ships:[], open:["polynomial regression over ~10 variants"]},
-  {name:"Memory consolidation research", kind:"evergreen", desc:"five-domain sweep + experiment",
-    ships:[], open:[]},
-  {name:"Persona experiment", kind:"evergreen", desc:"10-PR forward A/B cohort",
-    ships:[], open:["blind triage of the closed cohort"]},
-  {name:"Language typology platform", kind:"evergreen", desc:"typology → CS-concept mapping",
-    ships:[], open:["validity packet","ARM worker /probe + /translate — confirm shipped?"]},
-  {name:"Echo", kind:"evergreen", desc:"self-consistency LLM routing",
-    ships:[], open:[]},
-  {name:"Graph↔Flux integration", kind:"evergreen", desc:"dream cycles strengthen used edges",
-    ships:[], open:[]},
-  {name:"Forge", kind:"evergreen", desc:"planner/builder/evaluator CLI loop",
-    ships:[], open:[]},
-  {name:"Infra consolidation", kind:"evergreen", desc:"7-repo merge → multi-tenant monorepo",
-    ships:[], open:[]},
-  {name:"Matrix chat superbridge", kind:"evergreen", desc:"bridge for Imagineering + AMR",
-    ships:[], open:[]},
-  {name:"Continuwuity contribution", kind:"evergreen", desc:"upstream Matrix server work",
-    ships:[], open:[]},
-
-  {name:"Pattern Battle", kind:"oneshot", desc:"voice quiz + FSRS knowledge graph",
-    ships:[], open:["ship v1"]},
-  {name:"Presentation Level-Up", kind:"oneshot", desc:"synthetic rehearsal audience",
-    ships:[], open:[]},
-  {name:"Token dashboard", kind:"oneshot", desc:"accurate Claude token accounting",
-    ships:[], open:["confirm shipped?"]},
-  {name:"My Train ETA", kind:"oneshot", desc:"Flutter transit app",
-    ships:[], open:[]},
-  {name:"WhatsApp bot", kind:"oneshot", desc:"Baileys-based personal posting",
-    ships:[], open:[]},
-  {name:"Fake-me Discord", kind:"oneshot", desc:"persona Discord bot",
-    ships:[], open:[]},
-  {name:"CLI tools suite", kind:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan",
-    ships:[], open:[]},
-  {name:"Love agent", kind:"evergreen", desc:"relationship corpus / agent",
-    ships:[], open:[]},
-  {name:"Recycled Sound", kind:"evergreen", desc:"xdeca project",
-    ships:[], open:[]}
+  // one-shots — the whole project ships once
+  {name:"Pattern Battle", kind:"oneshot", desc:"voice quiz + FSRS knowledge graph", when:"", shipped:false, milestones:[{label:"playable v1 on GitHub Pages", done:false}]},
+  {name:"Presentation Level-Up", kind:"oneshot", desc:"synthetic rehearsal audience", when:"", shipped:false, milestones:[]},
+  {name:"Token dashboard", kind:"oneshot", desc:"accurate Claude token accounting", when:"", shipped:false, milestones:[]},
+  {name:"My Train ETA", kind:"oneshot", desc:"Flutter transit app", when:"", shipped:false, milestones:[]},
+  {name:"WhatsApp bot", kind:"oneshot", desc:"Baileys-based personal posting", when:"", shipped:false, milestones:[]},
+  {name:"Fake-me Discord", kind:"oneshot", desc:"persona Discord bot", when:"", shipped:false, milestones:[]}
 ];
 
 const DAY=86400000;
 const YEAR_START=new Date(2026,0,1), YEAR_END=new Date(2026,11,31);
 const $=id=>document.getElementById(id);
 
+function shipsFor(p){ return p.kind==="evergreen" ? p.versions.filter(v=>v.shipped).length : (p.shipped?1:0); }
+
 function render(){
   const box=$("projects"); box.innerHTML="";
   let shipped=0;
-  // projects with ships float to the top
-  const sorted=[...DATA].sort((a,b)=>b.ships.length-a.ships.length);
+  const sorted=[...DATA].sort((a,b)=>shipsFor(b)-shipsFor(a));
   sorted.forEach(p=>{
-    shipped += p.ships.length;
+    const n=shipsFor(p); shipped+=n;
     const el=document.createElement("div");
-    el.className="proj"+(p.ships.length?" has-ships":"");
-    const n=p.ships.length;
+    el.className="proj"+(n?" has-ships":"");
+    let badge;
+    if(p.kind==="evergreen"){
+      badge = n ? ('▸ '+n+'/'+p.versions.length+' versions shipped') : (p.versions.length+' version'+(p.versions.length>1?'s':'')+' planned');
+    } else {
+      badge = p.shipped ? ('✓ shipped'+(p.when?' '+p.when:'')) : 'one-shot · in progress';
+    }
     el.innerHTML =
       '<div class="phead">'+
         '<span class="pname"></span>'+
-        '<span class="badge'+(n?' lit':'')+'">'+(n?('▸ '+n+(n>1?' ships':' ship')):'no ships yet')+'</span>'+
+        '<span class="badge'+(n?' lit':'')+'"></span>'+
         '<span class="kind">'+(p.kind==="evergreen"?"evergreen":"one-shot")+'</span>'+
         '<span class="pdesc"></span>'+
       '</div>';
     el.querySelector(".pname").textContent=p.name;
+    el.querySelector(".badge").textContent=badge;
     el.querySelector(".pdesc").textContent=p.desc;
-    if(p.ships.length || p.open.length){
-      const ul=document.createElement("ul"); ul.className="ships";
-      p.ships.forEach(s=>{
-        const li=document.createElement("li"); li.className="done";
-        li.innerHTML='<span class="tick">✓</span><span class="when"></span><span class="lbl"></span>';
-        li.querySelector(".when").textContent=s.when||"";
-        li.querySelector(".lbl").textContent=s.label;
-        ul.appendChild(li);
-      });
-      p.open.forEach(lbl=>{
-        const li=document.createElement("li"); li.className="open";
-        li.innerHTML='<span class="tick">○</span><span class="when">·</span><span class="lbl"></span>';
-        li.querySelector(".lbl").textContent=lbl;
-        ul.appendChild(li);
-      });
-      el.appendChild(ul);
+
+    if(p.kind==="evergreen"){
+      p.versions.forEach(v=>renderVersion(el,v));
+    } else {
+      renderMilestones(el, p.milestones, p.shipped);
     }
     box.appendChild(el);
   });
@@ -212,6 +224,31 @@ function render(){
   $("pace").innerHTML =
     status+' &middot; on-pace today ≈ <b>'+expected+'</b><br>'+
     '<b>'+remaining+'</b> ships to go &middot; <b>'+weeksLeft+'</b> weeks left &middot; need <b>'+perWeek+'/week</b>';
+}
+
+function renderVersion(el, v){
+  const done=v.milestones.filter(m=>m.done).length, tot=v.milestones.length;
+  const div=document.createElement("div"); div.className="ver"+(v.shipped?" shipped":"");
+  div.innerHTML='<div class="vhead"><span class="vtick">'+(v.shipped?'✓':'○')+'</span>'+
+    '<span class="vlabel"></span>'+
+    (v.shipped&&v.when?'<span class="vwhen"></span>':'')+
+    '<span class="vprog">'+(v.shipped?'shipped':(tot?done+'/'+tot+' milestones':'no milestones yet'))+'</span></div>';
+  div.querySelector(".vlabel").textContent=v.label;
+  if(v.shipped&&v.when) div.querySelector(".vwhen").textContent=v.when;
+  el.appendChild(div);
+  if(v.milestones.length) renderMilestones(div, v.milestones, false);
+}
+
+function renderMilestones(parent, milestones, projShipped){
+  if(!milestones||!milestones.length) return;
+  const ul=document.createElement("ul"); ul.className="ms";
+  milestones.forEach(m=>{
+    const li=document.createElement("li"); li.className=(m.done||projShipped)?"done":"todo";
+    li.innerHTML='<span class="mtick">'+((m.done||projShipped)?'✓':'○')+'</span><span class="mlbl"></span>';
+    li.querySelector(".mlbl").textContent=m.label;
+    ul.appendChild(li);
+  });
+  parent.appendChild(ul);
 }
 render();
 </script>
