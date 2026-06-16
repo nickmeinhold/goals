@@ -112,10 +112,10 @@ const DATA = [
     ver("next release", [ms("flux plan steps 6–9")])]},
   {name:"Graph engine", tag:"evergreen", desc:"extract Engram's CRDT mechanism", children:[
     ver("v1 — core + first plugin", [ms("domvis 7-step seam")])]},
-  {name:"/consolidate skill", tag:"evergreen", desc:"the consolidation pipeline", children:[ ver("v5", []) ]},
+  {name:"/consolidate skill", tag:"evergreen", desc:"the consolidation pipeline", done:true, when:"2026-05", children:[ ver("v5", []) ]},
   {name:"Consolidation eval", tag:"evergreen", desc:"5-dim scoring, response-surface", children:[
     ver("next release", [ms("polynomial regression over ~10 variants")])]},
-  {name:"Persona experiment", tag:"evergreen", desc:"10-PR forward A/B cohort", children:[
+  {name:"Persona experiment", tag:"evergreen", desc:"10-PR forward A/B cohort", done:true, when:"2026-05", children:[
     ver("results writeup", [ms("blind triage of the closed cohort")])]},
   {name:"Language typology platform", tag:"evergreen", desc:"typology → CS-concept mapping", children:[
     ver("validity packet", [ms("ARM worker /probe + /translate live"), ms("validity packet written")])]},
@@ -123,22 +123,38 @@ const DATA = [
   {name:"Echo", tag:"evergreen", desc:"self-consistency LLM routing", children:[ ver("next release", []) ]},
   {name:"Agent-operator", tag:"evergreen", desc:"k8s-style Agent CRD + controller", children:[ ver("v1", []) ]},
   {name:"Graph↔Flux integration", tag:"evergreen", desc:"dream cycles strengthen used edges", children:[ ver("v1", []) ]},
-  {name:"Forge", tag:"evergreen", desc:"planner/builder/evaluator CLI loop", children:[ ver("next release", []) ]},
+  {name:"Forge", tag:"evergreen", desc:"planner/builder/evaluator CLI loop", done:true, when:"2026-05", children:[ ver("next release", []) ]},
   {name:"Infra consolidation", tag:"evergreen", desc:"7-repo merge → monorepo", children:[ ver("v1 — merged monorepo", []) ]},
-  {name:"Matrix chat superbridge", tag:"evergreen", desc:"bridge for Imagineering + AMR", children:[ ver("v1", []) ]},
+  {name:"Matrix chat superbridge", tag:"evergreen", desc:"bridge for Imagineering + AMR", done:true, when:"2026-03", children:[ ver("v1", []) ]},
   {name:"Continuwuity contribution", tag:"evergreen", desc:"upstream Matrix server work", children:[ ver("first merged PR", []) ]},
   {name:"Domain visualiser", tag:"evergreen", desc:"2021 Flutter collab-draw, revived", children:[ ver("v1", []) ]},
   {name:"CLI tools suite", tag:"evergreen", desc:"gmail/gdrive/signal/telegram/outline/kan", done:true, when:"2026-06", children:[ ver("next tool", []) ]},
   {name:"Love agent", tag:"evergreen", desc:"relationship corpus / agent", children:[ ver("v1", []) ]},
-  {name:"Recycled Sound", tag:"evergreen", desc:"xdeca project", children:[ ver("next release", []) ]},
+  {name:"Recycled Sound", tag:"evergreen", desc:"xdeca project", done:true, when:"2026-05", children:[ ver("next release", []) ]},
 
   // one-shots — children are milestones directly (no version layer); done when all done
-  {name:"Pattern Battle", tag:"one-shot", desc:"voice quiz + FSRS knowledge graph", children:[ ms("playable v1 on GitHub Pages") ]},
+  {name:"Pattern Battle", tag:"one-shot", desc:"voice quiz + FSRS knowledge graph", done:true, when:"2026-04", children:[ ms("playable v1 live on Vercel") ]},
   {name:"Presentation Level-Up", tag:"one-shot", desc:"synthetic rehearsal audience", children:[]},
-  {name:"Token dashboard", tag:"one-shot", desc:"accurate Claude token accounting", children:[]},
+  {name:"Token dashboard", tag:"one-shot", desc:"accurate Claude token accounting", done:true, when:"2026-04", children:[]},
   {name:"My Train ETA", tag:"one-shot", desc:"Flutter transit app", children:[]},
   {name:"WhatsApp bot", tag:"one-shot", desc:"Baileys-based personal posting", done:true, when:"2026-06", children:[]},
-  {name:"Fake-me Discord", tag:"one-shot", desc:"persona Discord bot", done:true, when:"2026-05", children:[]}
+  {name:"Fake-me Discord", tag:"one-shot", desc:"persona Discord bot", done:true, when:"2026-05", children:[]},
+
+  // new 2026 personal repos (surfaced by a ~/git scan, 2026-06-16) — in-flight until audited for a dateable ship
+  {name:"Familiars", tag:"evergreen", desc:"phone board of bound Claude agents — tap a card to dispatch one", children:[ ver("v1", []) ]},
+  {name:"Claude Resonance", tag:"evergreen", desc:"evolutionary search over system-prompt space for engaged responses", children:[ ver("v1", []) ]},
+  {name:"Containerized Claude", tag:"evergreen", desc:"two Claude instances as autonomous AI pen-pals, 24/7 on Fly.io", children:[ ver("v1", []) ]},
+  {name:"ACO Swarm Research", tag:"evergreen", desc:"swarm of LLMs foraging drug-repurposing leads via pheromone trails", children:[ ver("v1", []) ]},
+  {name:"social-credit", tag:"evergreen", desc:"personal daemon auto-syndicating content via a swarm of evolving agents", children:[ ver("v1", []) ]},
+  {name:"Orchestration dashboard", tag:"evergreen", desc:"real-time DevTools-style UI for launching + monitoring Claude agents", children:[ ver("v1", []) ]},
+  {name:"p2panda playground", tag:"evergreen", desc:"p2panda local-first experiments (Flutter)", children:[ ver("v1", []) ]},
+  {name:"Ghost Hustlers", tag:"one-shot", desc:"AR ghost-catching game (Unity 6 + AR Foundation)", children:[]},
+  {name:"tikok", tag:"one-shot", desc:"TikTok-style app where every video is dreamed on demand by Claude", children:[]},
+  {name:"LiDAR robot arm", tag:"one-shot", desc:"iPhone-LiDAR teleoperation for the LeRobot SO-100 arm", children:[]},
+  {name:"events-cli", tag:"one-shot", desc:"CLI for Meetup + Luma events via Playwright", children:[]},
+  {name:"tldr", tag:"one-shot", desc:"headless CLI rendering .tldr docs to SVG/PNG, no browser", children:[]},
+  {name:"claude-sessions", tag:"one-shot", desc:"git-backed archive of all Claude Code session history", children:[]},
+  {name:"winamp", tag:"one-shot", desc:"2026 spike — purpose TBD", children:[]}
 ];
 
 const DAY=86400000;
